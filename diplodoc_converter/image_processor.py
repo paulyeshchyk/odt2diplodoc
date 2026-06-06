@@ -1,3 +1,5 @@
+# diplodoc_converter/image_processor.py
+
 import re
 import shutil
 from pathlib import Path
@@ -9,10 +11,16 @@ def extract_and_replace_images(
     source_media_dir: Path,
     target_images_dir: Path
 ) -> Tuple[str, int]:
-    """Копирует изображения и заменяет пути в тексте."""
-    img_pattern = re.compile(
-        r'(?:!\[.*?\]\(|<img\s+[^>]*src=")([^"\)]+\.(?:png|jpg|jpeg|gif|svg|bmp))',
-        re.IGNORECASE
+    """
+    Копирует изображения из временной папки pandoc в папку images каждой секции
+    и заменяет ссылки в тексте на относительные (images/имя_файла).
+    Сохраняет оригинальный альтернативный текст, удаляя экранирование скобок.
+    Возвращает (новый_текст, количество_обработанных_изображений).
+    """
+    # Паттерн для Markdown-изображений с группами: (альт.текст) и (путь)
+    pattern = re.compile(
+        r'!\[(.*?)\]\((.*?\.(?:png|jpg|jpeg|gif|svg|bmp))\)',
+        re.IGNORECASE | re.DOTALL
     )
     
     ensure_dir(target_images_dir)
@@ -20,27 +28,44 @@ def extract_and_replace_images(
     
     def replace_path(match):
         nonlocal count
-        full_src = match.group(1)
+        alt_text = match.group(1).strip()
+        full_src = match.group(2).strip()
+        
+        # Очищаем alt-текст от экранирования скобок
+        alt_text = alt_text.replace(r'\[', '[').replace(r'\]', ']')
+        # Удаляем лишние символы переноса строк, которые могли попасть
+        alt_text = re.sub(r'\s+', ' ', alt_text).strip()
+        
+        # Извлекаем имя файла
+        src_path = Path(full_src)
+        img_name = src_path.name
+        if not img_name:
+            return match.group(0)
+        
+        # Ищем исходный файл
         source_file = None
         candidates = [
-            source_media_dir / full_src,
-            source_media_dir / Path(full_src).name,
-            source_media_dir / 'media' / Path(full_src).name,
-            source_media_dir / 'Pictures' / Path(full_src).name,
+            source_media_dir / img_name,
+            source_media_dir / 'media' / img_name,
+            source_media_dir / 'Pictures' / img_name,
+            source_media_dir / 'Attachments' / img_name,
+            Path(full_src)
         ]
         for cand in candidates:
-            if cand.exists():
+            if cand.exists() and cand.is_file():
                 source_file = cand
                 break
         
         if source_file:
-            dest_file = target_images_dir / source_file.name
-            shutil.copy2(source_file, dest_file)
+            dest_file = target_images_dir / img_name
+            if not dest_file.exists():
+                shutil.copy2(source_file, dest_file)
             count += 1
-            return f"![image](images/{source_file.name})"
+            # Собираем новую Markdown-ссылку с очищенным alt-текстом
+            return f"![{alt_text}](media/{img_name})"
         else:
-            print(f"Предупреждение: не найдено изображение {full_src}")
+            print(f"Предупреждение: изображение {full_src} не найдено в {source_media_dir}")
             return match.group(0)
     
-    new_text = img_pattern.sub(replace_path, text)
+    new_text = pattern.sub(replace_path, text)
     return new_text, count

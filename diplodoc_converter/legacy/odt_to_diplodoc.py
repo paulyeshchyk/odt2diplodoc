@@ -15,6 +15,7 @@ def convert_odt_to_diplodoc(odt_path, output_dir):
             'pandoc', odt_path, 
             '-f', 'odt', 
             '-t', 'markdown_strict+pipe_tables+backtick_code_blocks', 
+            '--lua-filter=no-img-size.lua',
             '--extract-media=' + temp_media_dir, 
             '-o', temp_md
         ], check=True)
@@ -59,7 +60,7 @@ def convert_odt_to_diplodoc(odt_path, output_dir):
         img_pattern = r'(?:!\[.*?\]\(|<img\s+[^>]*src=")(temp_images/[^"\)]+)'
         images_found = re.findall(img_pattern, chapter_text)
         
-        chapter_images_dir = os.path.join(chapter_dir, "images")
+        chapter_images_dir = os.path.join(chapter_dir, "media")
         
         if images_found:
             os.makedirs(chapter_images_dir, exist_ok=True)

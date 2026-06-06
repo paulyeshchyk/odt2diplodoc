@@ -1,0 +1,27 @@
+name: Convert ODT to Diplodoc
+
+on:
+  push:
+    paths:
+      - '*.odt'
+
+jobs:
+  convert:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pandoc
+        run: choco install pandoc
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Run converter
+        run: python cli.py manual.odt ./docs/ru --max-heading-level 6 --keep-cache --pandoc-format "markdown+raw_html"
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: diplodoc-docs
+          path: ./docs/ru

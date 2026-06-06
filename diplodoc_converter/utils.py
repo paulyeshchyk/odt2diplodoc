@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# diplodoc_converter/utils.py
+
 import re
 from pathlib import Path
 
