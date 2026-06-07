@@ -1,7 +1,7 @@
-# diplodoc_converter/strategies/base.py
+# diplodoc_converter/md_strategy/base.py
 from abc import ABC, abstractmethod
 
-class TransformationStrategy(ABC):
+class MDStrategy(ABC):
     """Абстрактная стратегия преобразования Markdown."""
     
     @abstractmethod

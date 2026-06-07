@@ -1,8 +1,8 @@
-# diplodoc_converter/strategies/footnotes.py
+# diplodoc_converter/md_strategy/footnotes.py
 import re
-from .base import TransformationStrategy
+from .base import MDStrategy
 
-class FixFootnotesStrategy(TransformationStrategy):
+class FixFootnotesStrategy(MDStrategy):
     """Преобразует сноски Pandoc в формат, понятный Diplodoc."""
     
     def transform(self, content: str) -> str:

@@ -1,8 +1,8 @@
-# diplodoc_converter/strategies/remove_empty_anchors.py
+# diplodoc_converter/md_strategy/remove_empty_anchors.py
 import re
-from .base import TransformationStrategy
+from .base import MDStrategy
 
-class RemoveEmptyAnchorsStrategy(TransformationStrategy):
+class RemoveEmptyAnchorsStrategy(MDStrategy):
     def transform(self, content: str) -> str:
         """Удаляет []{#anchor...} только из строк, которые не являются заголовками."""
         lines = content.splitlines()

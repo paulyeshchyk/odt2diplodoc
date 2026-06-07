@@ -1,30 +1,45 @@
 # diplodoc_converter/pandoc_wrapper.py
+# diplodoc_converter/pandoc_wrapper.py
 
-import subprocess
-import shutil
+import pypandoc
 from pathlib import Path
 from .utils import ensure_dir
 from .config import PandocOptions
 
-def convert_odt_to_markdown(odt_path: Path, temp_md_path: Path, temp_media_dir: Path, pandoc_options: PandocOptions) -> str:
-    if not shutil.which('pandoc'):
-        raise RuntimeError("Pandoc не найден. Установите pandoc и добавьте в PATH.")
 
+def convert_odt_to_markdown(
+    odt_path: Path, 
+    temp_md_path: Path, 
+    temp_media_dir: Path, 
+    pandoc_options: PandocOptions
+) -> str:
     ensure_dir(temp_media_dir)
 
     fmt = pandoc_options.to_pandoc_string()
     print(f"Формат Pandoc: -t {fmt}")
 
-    try:
-        subprocess.run([
-            'pandoc', str(odt_path),
-            '-f', 'odt',
-            '-t', fmt,
-            '--lua-filter=no-img-size.lua',
-            f'--extract-media={temp_media_dir}',
-            '-o', str(temp_md_path)
-        ], check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Ошибка pandoc: {e.stderr}") from e
+    # Дополнительные аргументы
+    extra_args = [
+        f"--extract-media={temp_media_dir}",
+        "--filter=pandoc-crossref",
+    ]
 
-    return temp_md_path.read_text(encoding='utf-8')
+    # Добавляем Lua-фильтры
+    if pandoc_options.lua_filter_path:
+        for lua_filter in pandoc_options.lua_filter_path:
+            extra_args.extend(["--lua-filter", lua_filter])
+            print(f"Применяется Lua-фильтр: {lua_filter}")
+
+    try:
+        output = pypandoc.convert_file(
+            source_file=str(odt_path),
+            to=fmt,
+            format='odt',
+            extra_args=extra_args,
+            outputfile=str(temp_md_path)
+        )
+        print("Конвертация через pypandoc прошла успешно.")
+    except Exception as e:
+        raise RuntimeError(f"Ошибка pypandoc: {e}") from e
+
+    return temp_md_path.read_text(encoding="utf-8")

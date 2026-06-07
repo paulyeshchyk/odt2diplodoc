@@ -1,1 +1,0 @@
-npx @diplodoc/cli -i ./gs10/docs -o ./gs10/build --allow-custom-resources

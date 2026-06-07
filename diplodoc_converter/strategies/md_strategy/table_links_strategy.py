@@ -1,8 +1,8 @@
-# diplodoc_converter/strategies/table_links.py
+# diplodoc_converter/md_strategy/table_links.py
 import re
-from .base import TransformationStrategy
+from .base import MDStrategy
 
-class FixTableLinksStrategy(TransformationStrategy):
+class FixTableLinksStrategy(MDStrategy):
     """Исправляет ссылки в таблицах: убирает мусор из ячеек, превращает в нормальные Markdown-ссылки."""
     
     def transform(self, content: str) -> str:

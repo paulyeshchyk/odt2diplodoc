@@ -1,8 +1,8 @@
-# diplodoc_converter/strategies/table_separators.py
+# diplodoc_converter/md_strategy/table_separators.py
 import re
-from .base import TransformationStrategy
+from .base import MDStrategy
 
-class FixTableSeparatorsStrategy(TransformationStrategy):
+class FixTableSeparatorsStrategy(MDStrategy):
     """Исправляет разделители таблиц для совместимости с Diplodoc."""
     
     def transform(self, content: str) -> str:

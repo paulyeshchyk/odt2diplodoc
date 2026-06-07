@@ -8,12 +8,45 @@
             "name": "Python: Запуск конвертера",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/run.py",
+            "program": "${workspaceFolder}/diplodoc_converter/cli.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
-            }
+            },
+            "args": [
+                "-odt_path",
+                "../gs10_odt/manual.odt",
+                "-output_dir",
+                "../gs10_odt/docs",
+                "--temp-dir",
+                "../gs10_odt/.cache",
+                "--lua-filter",
+                "no-img-size.lua, fix-sequence-refs.lua"
+            ]
+        },
+        {
+            "name": "Python: Запуск конвертера (с кэшем)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/diplodoc_converter/cli.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "args": [
+                "-odt_path",
+                "../gs10_odt/manual.odt",
+                "-output_dir",
+                "../gs10_odt/docs",
+                "--temp-dir",
+                "../gs10_odt/.cache",
+                "--lua-filter",
+                "no-img-size.lua, fix-sequence-refs.lua",
+                "--reuse-cache",
+                "--keep-cache"
+            ]
         }
     ]
 }

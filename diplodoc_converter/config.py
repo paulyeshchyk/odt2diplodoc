@@ -1,7 +1,7 @@
 # diplodoc_converter/config.py
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 @dataclass
 class CacheSettings:
@@ -32,26 +32,25 @@ class ParserSettings:
 class PandocOptions:
     """
     Настройки формата вывода Pandoc.
-    Каждое расширение может быть:
-    - None   → не передаётся в строку формата (оставить как в формате по умолчанию)
-    - True   → добавить +расширение
-    - False  → добавить -расширение
     """
-    format: str = "markdown"                     # базовый формат: "markdown", "commonmark", "gfm", "markdown_strict"
-    pipe_tables: Optional[bool] = None           # поддержка таблиц с | --- |
-    backtick_code_blocks: Optional[bool] = None  # код с тройными бэктиками
-    link_attributes: Optional[bool] = None       # атрибуты ссылок (id, class) – для markdown
-    raw_html: Optional[bool] = None              # разрешать HTML-теги
-    lua_filter_path: Optional[str] = None        # фильтры Lua
+    format: str = "markdown"
+    pipe_tables: Optional[bool] = None
+    backtick_code_blocks: Optional[bool] = None
+    link_attributes: Optional[bool] = None
+    raw_html: Optional[bool] = None
     raw_format: Optional[str] = None
+    
+    # Изменено: теперь список строк
+    lua_filter_path: Optional[List[str]] = field(default_factory=list)
 
     def to_pandoc_string(self) -> str:
         """Формирует строку вида "markdown+pipe_tables-raw_html"."""
         if self.raw_format is not None:
             return self.raw_format
+        
         result = self.format
         for field_name, field_value in self.__dict__.items():
-            if field_name == "format" or field_value is None:
+            if field_name in ("format", "lua_filter_path", "raw_format") or field_value is None:
                 continue
             if field_value:
                 result += f"+{field_name}"
