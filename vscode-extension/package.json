@@ -3,12 +3,13 @@
   "displayName": "Diplodoc Converter",
   "description": "Конвертация ODT в структуру Diplodoc",
   "publisher": "paulyestchick",
-  "version": "0.6.5",
+  "version": "0.7.1",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/paulyeshchyk/odt2diplodoc"
+  },
   "engines": {
     "vscode": "^1.85.0"
-  },
-  "pythonDependencies": {
-    "pypandoc_binary": "1.17"
   },
   "main": "./extension.js",
   "contributes": {

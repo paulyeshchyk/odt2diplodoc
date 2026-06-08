@@ -21,6 +21,7 @@ try {
 
     console.log('\nГотово!');
 } catch (err) {
-    console.error('\nОшибка сборки');
+    let msg = err instanceof Error ? err.message : String(err);
+    console.error(`\nОшибка сборки: ${msg}`);
     process.exit(1);
 }
