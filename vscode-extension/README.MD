@@ -63,10 +63,9 @@ The script automatically removes all such attributes, leaving clean Markdown.
 Create `index.yaml` (fields `title`, `href`, `meta`) and `toc.yaml` (with `items`, `include`) by hand.
 
 **With the tool:**  
-All YAML files are generated automatically:
-
-- inside each folder – `index.yaml` and `toc.yaml`;
-- in the root folder – `index.yaml`, `toc.yaml`, `index.md`;
+All YAML files are generated automatically:  
+- inside each folder – `index.yaml` and `toc.yaml`;  
+- in the root folder – `index.yaml`, `toc.yaml`, `index.md`;  
 - links in `toc.yaml` point to `index.md`, and for sub-sections an `include: {path: ..., mode: link}` is added.
 
 ---
@@ -86,10 +85,9 @@ The script builds a map of all anchors (`anchor-209` -> `path/to/section/index.m
 **Without the tool:**  
 You have to run Pandoc every time, even when only post-processing changes (like note style). You cannot give Pandoc a custom format string (`markdown-raw_html+pipe_tables`).
 
-**With the tool:**
-
-- You can keep a cache (folder with `full_doc.md`) and skip calling Pandoc on next runs — faster work.
-- Through `cli.py` or the `PandocOptions` dataclass you can set any format extensions (`+`, `-` or not set).
+**With the tool:**  
+- You can keep a cache (folder with `full_doc.md`) and skip calling Pandoc on next runs — faster work.  
+- Through `cli.py` or the `PandocOptions` dataclass you can set any format extensions (`+`, `-` or not set).  
 - You can use Lua filters (e.g. to remove image size attributes).
 
 ---
@@ -113,9 +111,8 @@ Any change to the converter’s behaviour requires editing the main code – ris
 
 **With the tool:**  
 All post-processing is moved into **strategies**:
-
-- Global strategies (applied to the whole Markdown before parsing).
-- Section strategies (applied to the body of each article after parsing).
+- Global strategies (applied to the whole Markdown before parsing).  
+- Section strategies (applied to the body of each article after parsing).  
 
 To add a new transformation (e.g. convert three-column tables into lists), you just write one class and register it in `__init__.py`. The rest of the code stays unchanged.
 
@@ -123,10 +120,10 @@ To add a new transformation (e.g. convert three-column tables into lists), you j
 
 ## How to start
 
-1. Install Python 3.11+, Pandoc, PyYAML.
-2. Clone the repository, create a virtual environment.
-3. Put your `manual.odt` in the root folder.
-4. Run `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.
+1. Install Python 3.11+, Pandoc, PyYAML.  
+2. Clone the repository, create a virtual environment.  
+3. Put your `manual.odt` in the root folder.  
+4. Run `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.  
 5. The result is ready to build with `diplodoc build`.
 
 For more settings, see comments in `cli.py` and `config.py`.
