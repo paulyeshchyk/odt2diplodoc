@@ -5,3 +5,4 @@ gs10
 **/node_modules
 vscode-extension/python
 vscode-extension/out
+vscode-extension/build

@@ -37,7 +37,7 @@ def convert_odt_to_markdown(
                     filter_path = filter_name
 
                 extra_args.extend(["--lua-filter", filter_path])
-                print(f"2Применяется Lua-фильтр: {filter_path}")
+                print(f"Применяется Lua-фильтр: {filter_path}")
 
     try:
         pypandoc.convert_file(

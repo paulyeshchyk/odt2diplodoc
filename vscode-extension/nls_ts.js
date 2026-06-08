@@ -4,7 +4,7 @@ const { translate } = require('./nls_loader');
 const nls_ts = {
   diplodoc: {
     submenu: {
-      title: "diplodoc.submenu.title"
+      diplodoc: "diplodoc.submenu.diplodoc"
     }
   }
 };
