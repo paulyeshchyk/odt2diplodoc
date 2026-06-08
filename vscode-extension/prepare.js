@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.resolve(__dirname, '..');
+const luaDir = path.join(rootDir, 'lua');
 const extDir = __dirname;
 
 console.log('Подготовка расширения...');
@@ -19,15 +20,18 @@ if (fs.existsSync(srcPython)) {
 }
 
 // Копируем .lua файлы из корня
-const luaFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.lua'));
+console.log('Подготовка lua...');
+const luaFiles = fs.readdirSync(luaDir).filter(f => f.endsWith('.lua'));
 if (luaFiles.length > 0) {
     const destLua = path.join(extDir, 'lua');
     if (!fs.existsSync(destLua)) fs.mkdirSync(destLua);
 
     luaFiles.forEach(file => {
-        fs.copyFileSync(path.join(rootDir, file), path.join(destLua, file));
+        fs.copyFileSync(path.join(luaDir, file), path.join(destLua, file));
     });
     console.log(`Скопировано ${luaFiles.length} lua-файлов`);
+} else {
+    console.warn('lua файлы не найдены');
 }
 
 // const licenseSrc = path.join(rootDir, 'LICENSE');

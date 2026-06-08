@@ -3,7 +3,7 @@
   "displayName": "Diplodoc Converter",
   "description": "Конвертация ODT в структуру Diplodoc",
   "publisher": "paulyestchick",
-  "version": "0.7.1",
+  "version": "0.7.4",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/paulyeshchyk/odt2diplodoc"

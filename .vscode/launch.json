@@ -28,7 +28,7 @@
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
-                "no-img-size.lua, fix-sequence-refs.lua",
+                "no-img-size.lua, fix-sequence-refs.lua, logging.lua",
                 "--lua-dir",
                 "./lua"
             ]
@@ -49,7 +49,7 @@
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
-                "no-img-size.lua, fix-sequence-refs.lua",
+                "no-img-size.lua, fix-sequence-refs.lua, logging.lua",
                 "--lua-dir",
                 "./lua",
                 "--reuse-cache",

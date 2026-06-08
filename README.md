@@ -136,3 +136,6 @@ For more settings, see comments in `cli.py` and `config.py`.
 ## License
 
 This project is licensed under the MIT License — free to use and modify.
+
+## Credits
+This project uses code from [pandoc-ext/logging](https://github.com/pandoc-ext/logging) by William Lupton, licensed under the MIT License.

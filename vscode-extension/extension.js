@@ -29,7 +29,7 @@ function activate(context) {
 
         const luaFilters = await vscode.window.showInputBox({
             prompt: 'Lua-фильтры (через запятую)',
-            value: 'no-img-size.lua,fix-sequence-refs.lua'
+            value: 'no-img-size.lua,fix-sequence-refs.lua,logging.lua'
         });
 
         const maxLevel = await vscode.window.showInputBox({
@@ -66,6 +66,6 @@ function activate(context) {
     context.subscriptions.push(disposable);
 }
 
-function deactivate() {}
+function deactivate() { }
 
-module.exports = {activate, deactivate}
+module.exports = { activate, deactivate }

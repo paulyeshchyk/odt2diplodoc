@@ -132,3 +132,6 @@
 ## Лицензия
 
 Проект распространяется под лицензией MIT — свободно для использования и доработок.
+
+## Credits
+This project uses code from [pandoc-ext/logging](https://github.com/pandoc-ext/logging) by William Lupton, licensed under the MIT License.
