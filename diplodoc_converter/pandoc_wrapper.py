@@ -1,5 +1,4 @@
 # diplodoc_converter/pandoc_wrapper.py
-# diplodoc_converter/pandoc_wrapper.py
 
 import pypandoc
 from pathlib import Path
@@ -18,20 +17,30 @@ def convert_odt_to_markdown(
     fmt = pandoc_options.to_pandoc_string()
     print(f"Формат Pandoc: -t {fmt}")
 
-    # Дополнительные аргументы
     extra_args = [
         f"--extract-media={temp_media_dir}",
         "--filter=pandoc-crossref",
     ]
 
-    # Добавляем Lua-фильтры
-    if pandoc_options.lua_filter_path:
-        for lua_filter in pandoc_options.lua_filter_path:
-            extra_args.extend(["--lua-filter", lua_filter])
-            print(f"Применяется Lua-фильтр: {lua_filter}")
+    # Добавляем Lua-фильтры с полными путями
+    if pandoc_options.lua_options:
+        if pandoc_options.lua_options.lua_filter_path:
+            for filter_name in pandoc_options.lua_options.lua_filter_path:
+                if pandoc_options.lua_options.lua_dir and not Path(filter_name).is_absolute():
+                    # Если фильтр из расширения — ищем в lua/
+                    full_path = Path(pandoc_options.lua_options.lua_dir) / filter_name
+                    if full_path.exists():
+                        filter_path = str(full_path)
+                    else:
+                        filter_path = filter_name
+                else:
+                    filter_path = filter_name
+
+                extra_args.extend(["--lua-filter", filter_path])
+                print(f"2Применяется Lua-фильтр: {filter_path}")
 
     try:
-        output = pypandoc.convert_file(
+        pypandoc.convert_file(
             source_file=str(odt_path),
             to=fmt,
             format='odt',

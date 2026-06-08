@@ -2,3 +2,6 @@
 gs10
 **/*.odt
 **/*.odt#
+**/node_modules
+vscode-extension/python
+vscode-extension/out

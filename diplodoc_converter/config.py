@@ -27,6 +27,10 @@ class ParserSettings:
     """
     max_heading_level_for_single_page: int = 6
 
+@dataclass
+class LuaOptions:
+    lua_filter_path: Optional[List[str]] = field(default_factory=list)
+    lua_dir: Optional[str] = None
 
 @dataclass
 class PandocOptions:
@@ -39,9 +43,7 @@ class PandocOptions:
     link_attributes: Optional[bool] = None
     raw_html: Optional[bool] = None
     raw_format: Optional[str] = None
-    
-    # Изменено: теперь список строк
-    lua_filter_path: Optional[List[str]] = field(default_factory=list)
+    lua_options: Optional[LuaOptions] = None    
 
     def to_pandoc_string(self) -> str:
         """Формирует строку вида "markdown+pipe_tables-raw_html"."""
@@ -50,7 +52,7 @@ class PandocOptions:
         
         result = self.format
         for field_name, field_value in self.__dict__.items():
-            if field_name in ("format", "lua_filter_path", "raw_format") or field_value is None:
+            if field_name in ("format", "raw_format", "lua_options") or field_value is None:
                 continue
             if field_value:
                 result += f"+{field_name}"

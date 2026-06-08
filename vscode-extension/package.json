@@ -1,0 +1,45 @@
+{
+  "name": "diplodoc-converter",
+  "displayName": "Diplodoc Converter",
+  "description": "Конвертация ODT в структуру Diplodoc",
+  "version": "0.3.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "activationEvents": [
+    "onCommand:diplodoc.importOdt"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "diplodoc.importOdt",
+        "title": "Diplodoc: Import ODT",
+        "category": "Diplodoc"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "diplodoc.importOdt",
+          "when": "resourceExtname == .odt",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "prepare": "node prepare.js",
+    "build": "npm run prepare",
+    "package": "npm run build && vsce package --no-dependencies",
+    "package:force": "npm run build && vsce package --no-dependencies --allow-missing-repository --allow-unused-files-pattern"
+  },
+  "files": [
+    "extension.js",
+    "python/**/*",
+    "lua/**/*"
+  ],
+  "devDependencies": {
+    "@vscode/vsce": "^2.22.0"
+  }
+}

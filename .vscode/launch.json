@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/vscode-extension"
+            ]
+        },
+        {
             "name": "Python: Запуск конвертера",
             "type": "debugpy",
             "request": "launch",
@@ -15,14 +23,14 @@
                 "PYTHONPATH": "${workspaceFolder}"
             },
             "args": [
-                "-odt_path",
                 "../gs10_odt/manual.odt",
-                "-output_dir",
                 "../gs10_odt/docs",
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
-                "no-img-size.lua, fix-sequence-refs.lua"
+                "no-img-size.lua, fix-sequence-refs.lua",
+                "--lua-dir",
+                "./lua"
             ]
         },
         {
@@ -36,14 +44,14 @@
                 "PYTHONPATH": "${workspaceFolder}"
             },
             "args": [
-                "-odt_path",
                 "../gs10_odt/manual.odt",
-                "-output_dir",
                 "../gs10_odt/docs",
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
                 "no-img-size.lua, fix-sequence-refs.lua",
+                "--lua-dir",
+                "./lua",
                 "--reuse-cache",
                 "--keep-cache"
             ]
