@@ -13,9 +13,9 @@ const destPython = path.join(extDir, 'python', 'diplodoc_converter');
 
 if (fs.existsSync(srcPython)) {
     copyDir(srcPython, destPython);
-    console.log('✓ Скопирован diplodoc_converter');
+    console.log('Скопирован diplodoc_converter');
 } else {
-    console.warn('⚠ Папка diplodoc_converter не найдена!');
+    console.warn('Папка diplodoc_converter не найдена!');
 }
 
 // Копируем .lua файлы из корня
@@ -23,12 +23,20 @@ const luaFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.lua'));
 if (luaFiles.length > 0) {
     const destLua = path.join(extDir, 'lua');
     if (!fs.existsSync(destLua)) fs.mkdirSync(destLua);
-    
+
     luaFiles.forEach(file => {
         fs.copyFileSync(path.join(rootDir, file), path.join(destLua, file));
     });
-    console.log(`✓ Скопировано ${luaFiles.length} lua-файлов`);
+    console.log(`Скопировано ${luaFiles.length} lua-файлов`);
 }
+
+// const licenseSrc = path.join(rootDir, 'LICENSE');
+// if (fs.existsSync(licenseSrc)) {
+//     fs.copyFileSync(licenseSrc, path.join(extDir, 'LICENSE'));
+//     console.log('Скопирован LICENSE');
+// } else {
+//     console.warn('LICENSE не найден в корне проекта');
+// }
 
 function copyDir(src, dest) {
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });

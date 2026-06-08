@@ -24,7 +24,7 @@
             },
             "args": [
                 "../gs10_odt/manual.odt",
-                "../gs10_odt/docs",
+                "../gs10_odt/docs/ru",
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
@@ -45,7 +45,7 @@
             },
             "args": [
                 "../gs10_odt/manual.odt",
-                "../gs10_odt/docs",
+                "../gs10_odt/docs/ru",
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",

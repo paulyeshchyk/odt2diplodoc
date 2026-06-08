@@ -1,0 +1,9 @@
+{
+    "name": "odt2diplodoc",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "build:extension": "node build-extension.js",
+        "build:extension:minor": "node build-extension.js minor"
+    }
+}

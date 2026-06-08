@@ -19,7 +19,7 @@ def convert_odt_to_markdown(
 
     extra_args = [
         f"--extract-media={temp_media_dir}",
-        "--filter=pandoc-crossref",
+        # "--filter=fix-sequence-refs",
     ]
 
     # Добавляем Lua-фильтры с полными путями

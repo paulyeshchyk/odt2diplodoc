@@ -2,11 +2,25 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
-console.log('Сборка Diplodoc VS Code Extension...\n');
+const bumpType = process.argv[2] || 'patch'; // по умолчанию patch
 
-execSync('node vscode-extension/prepare.js', { stdio: 'inherit' });
-console.log('Файлы скопированы\n');
+console.log(`Сборка Diplodoc Extension (bump: ${bumpType})...\n`);
 
-execSync('npm run package', { stdio: 'inherit', cwd: path.join(__dirname, 'vscode-extension') });
+try {
+    // Увеличиваем версию
+    if (bumpType === 'minor') {
+        execSync('node vscode-extension/scripts/bump-minor.js', { stdio: 'pipe' });
+    } else {
+        execSync('node vscode-extension/scripts/bump-version.js', { stdio: 'pipe' });
+    }
 
-console.log('\nГотово!');
+    // Запускаем полную сборку
+    execSync('node vscode-extension/scripts/build.js', {
+        stdio: 'pipe'
+    });
+
+    console.log('\nГотово!');
+} catch (err) {
+    console.error('\nОшибка сборки');
+    process.exit(1);
+}
