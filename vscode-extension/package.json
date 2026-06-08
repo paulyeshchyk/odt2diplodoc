@@ -2,7 +2,8 @@
   "name": "diplodoc-converter",
   "displayName": "Diplodoc Converter",
   "description": "Конвертация ODT в структуру Diplodoc",
-  "version": "0.6.0",
+  "publisher": "paulyestchick",
+  "version": "0.6.2",
   "engines": {
     "vscode": "^1.85.0"
   },
