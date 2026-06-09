@@ -65,8 +65,14 @@ class ConversionConfig:
     """
     Полная конфигурация конвертации.
     """
-    odt_path: str                    # путь к исходному ODT
-    output_dir: str                  # куда сохранить результат
+    odt_path: str                   # путь к исходному ODT
+    output_dir: str                 # куда сохранить результат
     cache_settings: CacheSettings   # настройки кэша (можно импортировать позже)
     parser_settings: ParserSettings # настройки парсинга (по умолчанию все заголовки)
     pandoc_options: PandocOptions
+    odt_crossreferences_options: OdtCrossReferences
+
+@dataclass
+class OdtCrossReferences:
+   enable_crossref: bool = False
+   crossref_metadata_file: Optional[str] = None 

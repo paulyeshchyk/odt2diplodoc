@@ -18,7 +18,7 @@ local step1_collect = {
             local ref_name = el.text:match('text:ref%-name="([^"]+)"')
             if ref_name then
                 last_seen_ref_name = ref_name
-               
+
                 -- Если картинка распарсилась чуть раньше в этом же блоке
                 if last_seen_image_src then
                     ref_to_image_map[ref_name] = last_seen_image_src
@@ -28,12 +28,12 @@ local step1_collect = {
             end
         end
     end,
-   
+
     -- Сканируем все картинки в документе
     Image = function(img)
         if not logged_images[img.src] then
             counter = counter + 1
-            logging.temp('[ШАГ 1] Найдена картинка в документе[' .. counter .. ']: ', img.src)
+            -- logging.temp('[ШАГ 1] Найдена картинка в документе[' .. counter .. ']: ', img.src)
             logged_images[img.src] = true
         end
         if last_seen_ref_name then
@@ -58,20 +58,20 @@ local step2_replace = {
         if el.format == 'opendocument' and el.text:match('text:sequence%-ref') then
             local ref_name = el.text:match('text:ref%-name="([^"]+)"')
             local ref_value = el.text:match('>([^<]+)</text:sequence%-ref>')
-           
+
             if not ref_value then
                 ref_value = el.text:match('text:reference%-format="[^"]+">([^<]+)')
             end
             if ref_name and ref_value then
                 -- Очищаем номер от пробелов
                 ref_value = ref_value:gsub("%s+", "")
-               
+
                 -- Ищем путь к картинке в нашей карте по строгому ID
                 local image_src = ref_to_image_map[ref_name]
                 if image_src then
                     logging.temp('[УСПЕХ ВТОРОГО ПРОХОДА] Заменили тег ' .. ref_name .. ' на ссылку: ' .. image_src)
                     -- Возвращаем чистый Markdown Link: [1432](Pictures/...)
-                    return pandoc.Link({pandoc.Str(ref_value)}, image_src)
+                    return pandoc.Link({ pandoc.Str(ref_value) }, image_src)
                 else
                     logging.temp('[ВНИМАНИЕ] Не нашли картинку для ID ссылки: ' .. tostring(ref_name))
                     return pandoc.Str(ref_value)

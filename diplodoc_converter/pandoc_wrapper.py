@@ -1,54 +1,60 @@
 # diplodoc_converter/pandoc_wrapper.py
-
+import os
 import pypandoc
 from pathlib import Path
 from .utils import ensure_dir
 from .config import PandocOptions
 
-
 def convert_odt_to_markdown(
-    odt_path: Path, 
-    temp_md_path: Path, 
-    temp_media_dir: Path, 
+    odt_path: Path,
+    temp_md_path: Path,
+    temp_media_dir: Path,
     pandoc_options: PandocOptions
 ) -> str:
     ensure_dir(temp_media_dir)
-
     fmt = pandoc_options.to_pandoc_string()
     print(f"Формат Pandoc: -t {fmt}")
 
-    extra_args = [
-        f"--extract-media={temp_media_dir}",
-        # "--filter=fix-sequence-refs",
-    ]
-
-    # Добавляем Lua-фильтры с полными путями
-    if pandoc_options.lua_options:
-        if pandoc_options.lua_options.lua_filter_path:
-            for filter_name in pandoc_options.lua_options.lua_filter_path:
-                if pandoc_options.lua_options.lua_dir and not Path(filter_name).is_absolute():
-                    # Если фильтр из расширения — ищем в lua/
-                    full_path = Path(pandoc_options.lua_options.lua_dir) / filter_name
-                    if full_path.exists():
-                        filter_path = str(full_path)
-                    else:
-                        filter_path = filter_name
-                else:
-                    filter_path = filter_name
-
-                extra_args.extend(["--lua-filter", filter_path])
-                print(f"Применяется Lua-фильтр: {filter_path}")
-
+    original_cwd = Path.cwd()
+    target_dir = temp_media_dir.parent
+    os.chdir(target_dir)
     try:
+        extra_args = [f"--extract-media=media"]
+
+        # Lua-фильтры
+        if pandoc_options.lua_options and pandoc_options.lua_options.lua_filter_path:
+            lua_dir = None
+            if pandoc_options.lua_options.lua_dir:
+                lua_dir = Path(pandoc_options.lua_options.lua_dir)
+                if not lua_dir.is_absolute():
+                    lua_dir = original_cwd / lua_dir
+
+            for filter_name in pandoc_options.lua_options.lua_filter_path:
+                if filter_name == "logging.lua":
+                    continue
+                filter_path = Path(filter_name)
+                if not filter_path.is_absolute():
+                    if lua_dir and (lua_dir / filter_name).exists():
+                        filter_path = lua_dir / filter_name
+                    else:
+                        filter_path = original_cwd / filter_name
+                if filter_path.exists():
+                    extra_args.extend(["--lua-filter", str(filter_path)])
+                else:
+                    print(f"Предупреждение: Lua-фильтр не найден: {filter_path}")
+
+        source_file = Path(odt_path)
+        if not source_file.is_absolute():
+            source_file = original_cwd / source_file
+
         pypandoc.convert_file(
-            source_file=str(odt_path),
+            source_file=str(source_file),
             to=fmt,
             format='odt',
             extra_args=extra_args,
-            outputfile=str(temp_md_path)
+            outputfile=temp_md_path.name
         )
-        print("Конвертация через pypandoc прошла успешно.")
-    except Exception as e:
-        raise RuntimeError(f"Ошибка pypandoc: {e}") from e
-
-    return temp_md_path.read_text(encoding="utf-8")
+        result = temp_md_path.read_text(encoding="utf-8")
+    finally:
+        os.chdir(original_cwd)
+    return result

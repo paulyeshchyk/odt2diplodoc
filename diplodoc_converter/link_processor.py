@@ -44,7 +44,6 @@ def build_slug_and_anchor_maps(sections: List[Section], base_output_dir: Path) -
         slug_map[sec.slug] = rel_path          # короткое имя тоже может быть полезно
         if sec.anchor:
             anchor_map[sec.anchor] = rel_path
-            # print(f"ANCHOR MAP: {sec.anchor} -> {rel_path}")
     return slug_map, anchor_map
 
 def replace_internal_links(text: str, slug_map: Dict[str, Path], anchor_map: Dict[str, Path], current_section_slug: str) -> str:

@@ -75,8 +75,6 @@ def parse_sections(markdown_content: str, parser_settings: ParserSettings | None
             # Извлекаем якорь ДО очистки
             anchor = extract_anchor(raw_title)
             cleaned = clean_heading(raw_title)
-            # if anchor:
-            #     print(f"Найден якорь {anchor} для заголовка '{cleaned}'")            
             
             if not cleaned:
                 if current_section is not None:

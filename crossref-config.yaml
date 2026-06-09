@@ -1,0 +1,6 @@
+# crossref-config.yaml
+figPrefix:
+  - "рис."
+  - "рис"
+figLabels: fig
+linkPrefix: "рис. "

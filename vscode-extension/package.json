@@ -3,7 +3,7 @@
   "displayName": "Diplodoc Converter",
   "description": "Конвертация ODT в структуру Diplodoc",
   "publisher": "paulyestchick",
-  "version": "0.7.4",
+  "version": "0.8.11",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/paulyeshchyk/odt2diplodoc"
@@ -16,12 +16,13 @@
     "submenus": [
       {
         "id": "diplodoc.explorer.context.menu",
-        "label": "%diplodoc.submenu.diplodoc%"
+        "label": "Diplodoc"
       }
     ],
     "commands": [
       {
         "command": "diplodoc.importOdt",
+        "when": "resourceExtname == '.odt'",
         "title": "Import ODT",
         "category": "Diplodoc"
       }
@@ -41,6 +42,9 @@
         }
       ]
     }
+  },
+  "dependencies": {
+    "vscode-nls": "^5.2.0"
   },
   "scripts": {
     "prepare": "node prepare.js",

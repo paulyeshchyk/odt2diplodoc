@@ -28,9 +28,12 @@
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
-                "no-img-size.lua, fix-sequence-refs.lua, logging.lua",
+                "no-img-size.lua, logging.lua",
                 "--lua-dir",
-                "./lua"
+                "./lua",
+                "--enable-crossref",
+                "--crossref-metadata-file",
+                "crossref-config.yaml"
             ]
         },
         {
@@ -49,11 +52,12 @@
                 "--temp-dir",
                 "../gs10_odt/.cache",
                 "--lua-filter",
-                "no-img-size.lua, fix-sequence-refs.lua, logging.lua",
+                "no-img-size.lua, logging.lua",
                 "--lua-dir",
                 "./lua",
                 "--reuse-cache",
-                "--keep-cache"
+                "--keep-cache",
+                "--enable-crossref",
             ]
         }
     ]

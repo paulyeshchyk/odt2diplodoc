@@ -34,14 +34,6 @@ if (luaFiles.length > 0) {
     console.warn('lua файлы не найдены');
 }
 
-// const licenseSrc = path.join(rootDir, 'LICENSE');
-// if (fs.existsSync(licenseSrc)) {
-//     fs.copyFileSync(licenseSrc, path.join(extDir, 'LICENSE'));
-//     console.log('Скопирован LICENSE');
-// } else {
-//     console.warn('LICENSE не найден в корне проекта');
-// }
-
 function copyDir(src, dest) {
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
     const entries = fs.readdirSync(src, { withFileTypes: true });

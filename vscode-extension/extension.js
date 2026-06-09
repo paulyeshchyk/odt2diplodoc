@@ -1,12 +1,19 @@
-// vscode-extension/src/extension.ts
+// vscode-extension/extension.ts
 const vscode = require('vscode');
 const path = require('path');
+const { initNls } = require('./nls_loader');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
     console.log('Diplodoc Converter extension is now active!');
+
+    const locale = vscode.env.language;
+    const rootPath = context.extensionPath;
+
+    initNls(locale, rootPath);
+
 
     const disposable = vscode.commands.registerCommand('diplodoc.importOdt', async (uri) => {
         const odtPath = uri.fsPath;
@@ -26,22 +33,29 @@ function activate(context) {
         const useCache = await vscode.window.showQuickPick(['Да (с кэшем)', 'Нет (чистый запуск)'], {
             placeHolder: 'Использовать кэш?'
         });
+        if (!useCache) return;
 
+        //TODO: использовать реальный список
         const luaFilters = await vscode.window.showInputBox({
             prompt: 'Lua-фильтры (через запятую)',
-            value: 'no-img-size.lua,fix-sequence-refs.lua,logging.lua'
+            value: 'no-img-size.lua'
         });
+        if (!luaFilters) return;
 
         const maxLevel = await vscode.window.showInputBox({
             prompt: 'Максимальный уровень заголовка',
             value: '6'
         });
+        if (!maxLevel) return;
 
         const args = [odtPath, outputDir, '--max-heading-level', maxLevel || '6'];
 
         if (useCache === 'Да (с кэшем)') {
             args.push('--reuse-cache', '--keep-cache');
         }
+
+        args.push('--enable-crossref');
+
         if (luaFilters) {
             args.push('--lua-filter', luaFilters);
         }
