@@ -1,8 +1,8 @@
 # diplodoc_converter/section_strategy/remove_pandoc_attrs.py
 import re
 
-from diplodoc_converter.section_parser import Section
-from diplodoc_converter.strategies.section_strategy.base import SectionStrategy
+from diplodoc_converter.fromODT.section_parser import Section
+from diplodoc_converter.fromODT.strategies.section_strategy.base import SectionStrategy
 
 class RemovePandocAttributesStrategy(SectionStrategy):
     def transform_section(self, sec: Section) -> None:

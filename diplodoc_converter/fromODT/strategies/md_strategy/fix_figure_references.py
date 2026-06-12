@@ -1,6 +1,6 @@
 # strategies/md_strategy/fix_figure_references.py
 import re
-from diplodoc_converter.strategies.md_strategy.base import MDStrategy
+from diplodoc_converter.fromODT.strategies.md_strategy.base import MDStrategy
 from ...figure_constants import (
     PLACEHOLDER_PATTERN, FIGURE_MARKER,
     SOURCE_IMAGE_FOLDER, TARGET_IMAGE_FOLDER

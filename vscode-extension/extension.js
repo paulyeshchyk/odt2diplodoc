@@ -1,9 +1,70 @@
-// vscode-extension/extension.ts
+// vscode-extension/extension.js
 const vscode = require('vscode');
 const path = require('path');
 const { initNls } = require('./nls_loader');
 
 /**
+ * Возвращает корневую папку рабочей области.
+ * @param {vscode.Uri} [uri]  
+ * @returns {string}
+ */
+function getWorkspaceRoot(uri) {
+    const folder = vscode.workspace.workspaceFolders?.[0];
+    if (folder) return folder.uri.fsPath;
+    if (uri) return path.dirname(uri.fsPath);
+    return process.cwd();
+}
+
+/**
+ * Путь к папке python внутри расширения.
+ * @param {vscode.ExtensionContext} context
+ * @returns {string}
+ */
+function getPythonDir(context) {
+    return path.join(context.extensionPath, 'python');
+}
+
+/** 
+ * @typedef {Object} TerminalOptions
+ * @property {string} terminalName
+ * @property {string} cwd
+ */
+
+/**
+ * Путь к папке lua внутри расширения.
+ * @param {vscode.ExtensionContext} context
+ * @returns {string}
+ */
+function getLuaDir(context) {
+    return path.join(context.extensionPath, 'lua');
+}
+
+/**
+ * Запускает Python-скрипт в терминале VSCode с правильным PYTHONPATH.
+ * @param {vscode.ExtensionContext} context
+ * @param {string} scriptPath – абсолютный путь к скрипту
+ * @param {string[]} args – массив аргументов командной строки
+ * @param {TerminalOptions} options – { cwd: string, terminalName: string }
+ */
+async function runPythonScript(context, scriptPath, args, options) {
+    const pythonDir = getPythonDir(context);
+    const terminal = vscode.window.createTerminal({
+        name: options.terminalName,
+        cwd: options.cwd,
+    });
+    terminal.show();
+
+    const pythonPathCmd = `$env:PYTHONPATH = "${pythonDir}"`;
+    const quotedArgs = args.map(arg => `"${arg}"`).join(' ');
+    const pythonCmd = `python "${scriptPath}" ${quotedArgs}`;
+    const fullCmd = `${pythonPathCmd}; ${pythonCmd}`;
+
+    console.log(`[Diplodoc] Запуск: ${fullCmd}`);
+    terminal.sendText(fullCmd);
+}
+
+/**
+ * Активация расширения: регистрация команд.
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
@@ -11,19 +72,36 @@ function activate(context) {
 
     const locale = vscode.env.language;
     const rootPath = context.extensionPath;
-
     initNls(locale, rootPath);
 
+    // Команда: сборка ODT из MD-иерархии
+    const buildOdt = vscode.commands.registerCommand('diplodoc.buildOdt', async (uri) => {
+        let inputDir = uri ? uri.fsPath : await vscode.window.showInputBox({
+            prompt: 'Путь к корневой папке документации (содержит toc.yaml)'
+        });
+        if (!inputDir) return;
 
-    const disposable = vscode.commands.registerCommand('diplodoc.importOdt', async (uri) => {
+        const outputFile = await vscode.window.showSaveDialog({
+            title: 'Сохранить ODT как...',
+            filters: { 'ODT files': ['odt'] }
+        });
+        if (!outputFile) return;
+
+        const workspaceRoot = getWorkspaceRoot(uri);
+        const scriptPath = path.join(getPythonDir(context), 'diplodoc_converter', 'intoODT', 'cli.py');
+        const args = ['--input-dir', inputDir, '--output', outputFile.fsPath];
+        await runPythonScript(context, scriptPath, args, {
+            cwd: workspaceRoot,
+            terminalName: 'Build ODT from MD'
+        });
+    });
+
+    // Команда: импорт ODT в Diplodoc
+    const importOdt = vscode.commands.registerCommand('diplodoc.importOdt', async (uri) => {
         const odtPath = uri.fsPath;
-        const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || path.dirname(odtPath);
+        const workspaceRoot = getWorkspaceRoot(uri);
+        const cliPath = path.join(getPythonDir(context), 'diplodoc_converter', 'cli.py');
 
-        const pythonDir = path.join(context.extensionPath, 'python');
-        const luaDir = path.join(context.extensionPath, 'lua');
-        const cliPath = path.join(pythonDir, 'diplodoc_converter', 'cli.py');
-
-        // Диалоги
         const outputDir = await vscode.window.showInputBox({
             prompt: 'Папка для результата (output)',
             value: path.join(path.dirname(odtPath), 'docs'),
@@ -35,7 +113,6 @@ function activate(context) {
         });
         if (!useCache) return;
 
-        //TODO: использовать реальный список
         const luaFilters = await vscode.window.showInputBox({
             prompt: 'Lua-фильтры (через запятую)',
             value: 'no-img-size.lua'
@@ -48,38 +125,23 @@ function activate(context) {
         });
         if (!maxLevel) return;
 
-        const args = [odtPath, outputDir, '--max-heading-level', maxLevel || '6'];
-
+        const args = [odtPath, outputDir, '--max-heading-level', maxLevel];
         if (useCache === 'Да (с кэшем)') {
             args.push('--reuse-cache', '--keep-cache');
         }
-
         args.push('--enable-crossref');
+        args.push('--lua-filter', luaFilters);
+        args.push('--lua-dir', getLuaDir(context));
 
-        if (luaFilters) {
-            args.push('--lua-filter', luaFilters);
-        }
-
-        args.push('--lua-dir', luaDir);
-
-        const terminal = vscode.window.createTerminal({
-            name: "Diplodoc Converter",
+        await runPythonScript(context, cliPath, args, {
             cwd: workspaceRoot,
+            terminalName: 'Diplodoc Converter'
         });
-        terminal.show();
-
-        const pythonPathCmd = `$env:PYTHONPATH = "${pythonDir}"`;
-        const pythonCmd = `python "${cliPath}" "${args.join('" "')}"`;
-
-        const fullCmd = `${pythonPathCmd}; ${pythonCmd}`;
-
-        console.log("[Diplodoc] Запуск команды:\n", fullCmd);
-        terminal.sendText(fullCmd);
     });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(buildOdt, importOdt);
 }
 
 function deactivate() { }
 
-module.exports = { activate, deactivate }
+module.exports = { activate, deactivate };

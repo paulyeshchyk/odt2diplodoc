@@ -3,7 +3,7 @@
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
-from .utils import slugify
+from .utils import generate_folder_name, slugify
 from .section_parser import Section, flatten_sections
 
 def normalize_title(title: str) -> str:
@@ -20,7 +20,7 @@ def build_slug_and_anchor_maps(sections: List[Section], base_output_dir: Path) -
     
     def assign_slugs(sec: Section, parent_full: Path = Path()):
         # Генерируем имя для текущей секции
-        part = slugify(sec.title)
+        part = generate_folder_name(sec.title)
         if not part:
             part = "bez_nazvaniya"
         # Уникализация в пределах одного родителя (если нужно, можно добавить счётчик)

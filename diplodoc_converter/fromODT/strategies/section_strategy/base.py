@@ -1,7 +1,7 @@
 # diplodoc_converter/section_strategy/base.py
 from abc import ABC, abstractmethod
 
-from diplodoc_converter.section_parser import Section
+from diplodoc_converter.fromODT.section_parser import Section
 
 
 class SectionStrategy(ABC):

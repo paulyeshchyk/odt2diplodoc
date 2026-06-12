@@ -1,8 +1,8 @@
 # diplodoc_converter/section_strategy/two_column_table_note_strategy.py
 import re
 
-from diplodoc_converter.section_parser import Section
-from diplodoc_converter.strategies.section_strategy.base import SectionStrategy
+from diplodoc_converter.fromODT.section_parser import Section
+from diplodoc_converter.fromODT.strategies.section_strategy.base import SectionStrategy
 
 
 class TwoColumnTableNoteStrategy(SectionStrategy):

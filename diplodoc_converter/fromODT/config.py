@@ -61,6 +61,11 @@ class PandocOptions:
         return result
 
 @dataclass
+class OdtCrossReferences:
+   enable_crossref: bool = False
+   crossref_metadata_file: Optional[str] = None 
+   
+@dataclass
 class ConversionConfig:
     """
     Полная конфигурация конвертации.
@@ -71,8 +76,3 @@ class ConversionConfig:
     parser_settings: ParserSettings # настройки парсинга (по умолчанию все заголовки)
     pandoc_options: PandocOptions
     odt_crossreferences_options: OdtCrossReferences
-
-@dataclass
-class OdtCrossReferences:
-   enable_crossref: bool = False
-   crossref_metadata_file: Optional[str] = None 

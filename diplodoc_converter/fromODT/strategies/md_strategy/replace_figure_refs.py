@@ -1,5 +1,5 @@
 import re
-from diplodoc_converter.strategies.md_strategy.base import MDStrategy
+from diplodoc_converter.fromODT.strategies.md_strategy.base import MDStrategy
 from ...figure_constants import REFERENCE_PATTERN
 
 class ReplaceFigureReferencesStrategy(MDStrategy):

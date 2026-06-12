@@ -3,7 +3,7 @@
   "displayName": "Diplodoc Converter",
   "description": "Конвертация ODT в структуру Diplodoc",
   "publisher": "paulyestchick",
-  "version": "0.8.11",
+  "version": "0.9.12",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/paulyeshchyk/odt2diplodoc"
@@ -20,6 +20,11 @@
       }
     ],
     "commands": [
+      {
+        "command": "diplodoc.buildOdt",
+        "title": "Build ODT from MD",
+        "category": "Diplodoc"
+      },
       {
         "command": "diplodoc.importOdt",
         "when": "resourceExtname == '.odt'",
@@ -39,6 +44,11 @@
           "command": "diplodoc.importOdt",
           "when": "resourceExtname == '.odt'",
           "group": "1_import"
+        },
+        {
+          "command": "diplodoc.buildOdt",
+          "when": "explorerResourceIsFolder",
+          "group": "2_build"
         }
       ]
     }

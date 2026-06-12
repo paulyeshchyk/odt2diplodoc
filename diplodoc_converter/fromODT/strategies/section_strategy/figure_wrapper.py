@@ -1,7 +1,7 @@
 import re
-from diplodoc_converter.figure_constants import CAPTION_SEPARATOR, FIGURE_CAPTION_PREFIX, TARGET_IMAGE_FOLDER
-from diplodoc_converter.section_parser import Section
-from diplodoc_converter.strategies.section_strategy.base import SectionStrategy
+from diplodoc_converter.fromODT.figure_constants import CAPTION_SEPARATOR, FIGURE_CAPTION_PREFIX, TARGET_IMAGE_FOLDER
+from diplodoc_converter.fromODT.section_parser import Section
+from diplodoc_converter.fromODT.strategies.section_strategy.base import SectionStrategy
 
 class WrapImagesInFiguresStrategy(SectionStrategy):
     def transform_section(self, sec: Section) -> None:
@@ -22,9 +22,15 @@ class WrapImagesInFiguresStrategy(SectionStrategy):
             full_alt = full_alt.replace(r'\"', '"').replace(r"\&quot;", '"')
             full_alt = re.sub(r'\\([\[\]])', r'\1', full_alt)
             # Добавляем пробел после "Рисунок 12." если его нет
-            full_alt = re.sub(rf'({FIGURE_CAPTION_PREFIX}\s+\d+\.)(\S)', rf'\1{CAPTION_SEPARATOR}\2', full_alt)
-            src = f"{TARGET_IMAGE_FOLDER}/{filename}"
-            return f"![{full_alt}]({src})\n\n*{full_alt}*\n\n"
+            full_alt = re.sub(r'(Рисунок\s+\d+\.)(\S)', r'\1 \2', full_alt)
+            # Удаляем все лишние пробелы и переводы строк (заменяем на один пробел)
+            full_alt = re.sub(r'\s+', ' ', full_alt).strip()
+            src = f"{folder}/{filename}"
+            if not full_alt:
+                # Пустая подпись – не добавляем звёздочки
+                return f"![{short_alt}]({src})\n\n"
+            else:
+                return f"![{full_alt}]({src})\n\n*{full_alt}*\n\n"
 
         new_content = pattern.sub(repl, content)
         # new_content = re.sub(r'\{alt=["\'][^"\']*["\']\}', '', new_content)

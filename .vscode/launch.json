@@ -16,7 +16,7 @@
             "name": "Python: Запуск конвертера",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/diplodoc_converter/cli.py",
+            "program": "${workspaceFolder}/fromODT/diplodoc_converter/cli.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {
@@ -40,7 +40,7 @@
             "name": "Python: Запуск конвертера (с кэшем)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/diplodoc_converter/cli.py",
+            "program": "${workspaceFolder}/fromODT/diplodoc_converter/cli.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {
@@ -59,6 +59,51 @@
                 "--keep-cache",
                 "--enable-crossref",
             ]
+        },
+        {
+            "name": "Python: Экспорт в ODT (build)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "diplodoc_converter.fromODT.cli",
+            "args": [
+                "build",
+                "-i",
+                "D:\\projects\\private\\gs10_odt\\docs\\ru_orig",
+                "-o",
+                "D:\\projects\\private\\gs10_odt\\calibr.odt",
+                "--width-threshold",
+                "700",
+                "--reference",
+                "D:\\projects\\private\\gs10_odt\\reference.odt"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Python: Импорт ODT в Diplodoc (import)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "diplodoc_converter.fromODT.cli",
+            "args": [
+                "import",
+                "D:\\projects\\private\\gs10_odt\\calibr.odt",
+                "D:\\projects\\ascon\\GULF_Help\\docs\\ru",
+                "--enable-crossref",
+                "--max-heading-level",
+                "4",
+                "--lua-filter",
+                "no-img-size.lua, logging.lua",
+                "--lua-dir",
+                "./lua",
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }
