@@ -8,12 +8,14 @@ from diplodoc_converter.fromODT.stages.GlobalStrategiesStage import (
 )
 from diplodoc_converter.fromODT.stages.MDParserStage import MDParserStage
 from diplodoc_converter.fromODT.stages.ODTCloneStage import ODTCloneStage
-from diplodoc_converter.fromODT.stages.ODTCrossrefStage import ODTCrossrefStage
-from diplodoc_converter.fromODT.stages.ODTStyleNoteStage import (
-    ODTStyleNoteStage,
+from diplodoc_converter.fromODT.stages.ODTFigureMapBuildStage import (
+    ODTFigureMapBuildStage,
 )
-from diplodoc_converter.fromODT.stages.ODTReplacePagebrakeStage import (
-    ODTReplacePagebrakeStage,
+from diplodoc_converter.fromODT.stages.ODTStyleNoteReplaceStage import (
+    ODTStyleNoteReplaceStage,
+)
+from diplodoc_converter.fromODT.stages.ODTPagebrakeReplaceStage import (
+    ODTPagebrakeReplaceStage,
 )
 from diplodoc_converter.fromODT.stages.MDSectionStrategiesStage import (
     MDSectionStrategiesStage,
@@ -28,11 +30,11 @@ from diplodoc_converter.fromODT.stages.DirOutputWipeStage import (
 from diplodoc_converter.fromODT.stages.MDSectionCopyImagesStage import (
     MDSectionCopyImagesStage,
 )
-from diplodoc_converter.fromODT.stages.InternalLinkProcessorStage import (
-    InternalLinkProcessorStage,
+from diplodoc_converter.fromODT.stages.MDSectionsLinkProcessingStage import (
+    MDSectionsLinkProcessingStage,
 )
-from diplodoc_converter.fromODT.stages.MDCrosslinkReplaceStage import (
-    MDCrosslinkReplaceStage,
+from diplodoc_converter.fromODT.stages.MDFigureMapReplaceStage import (
+    MDFigureMapReplaceStage,
 )
 from diplodoc_converter.fromODT.stages.YamlStage import YamlStage
 from diplodoc_converter.intoODT.config import MdToOdtConfig
@@ -166,15 +168,15 @@ def run_import(args):
         [
             DirOutputWipeStage(),
             ODTCloneStage(),
-            ODTCrossrefStage(),
-            ODTStyleNoteStage(),
-            ODTReplacePagebrakeStage(),
+            ODTFigureMapBuildStage(),
+            ODTStyleNoteReplaceStage(),
+            ODTPagebrakeReplaceStage(),
             MDParserStage(),
             GlobalStrategiesStage(),
             MDSectionsStage(),
-            InternalLinkProcessorStage(),
+            MDSectionsLinkProcessingStage(),
             MDSectionCopyImagesStage(),
-            MDCrosslinkReplaceStage(),
+            MDFigureMapReplaceStage(),
             MDSectionStrategiesStage(),
             YamlStage(),
             DirCacheWipeStage(),

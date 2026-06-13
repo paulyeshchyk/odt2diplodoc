@@ -6,10 +6,9 @@ from diplodoc_converter.fromODT.odt.preprocessors.OdtPreprocessor_StyleNote impo
 )
 
 
-class ODTStyleNoteStage(Stage):
+class ODTStyleNoteReplaceStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
         odt_temp_path = Os_File_Utils.odt_temp_path(ctx.config)
 
         notePreprocessor = OdtPreprocessor_StyleNote()
         notePreprocessor.process(odt_temp_path)
-        return super().process(ctx)

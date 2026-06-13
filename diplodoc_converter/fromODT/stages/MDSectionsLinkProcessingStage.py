@@ -9,7 +9,7 @@ from pathlib import Path
 from .Stage import Stage
 
 
-class InternalLinkProcessorStage(Stage):
+class MDSectionsLinkProcessingStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
         print(ctx.messages.get("internal_links"))
         output_dir = Path(ctx.config.output_dir).absolute()

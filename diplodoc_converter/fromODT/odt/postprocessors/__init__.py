@@ -1,9 +1,9 @@
 from ...stages.MDSectionCopyImagesStage import MDSectionCopyImagesStage
-from ...stages.InternalLinkProcessorStage import InternalLinkProcessorStage
-from ...stages.MDCrosslinkReplaceStage import MDCrosslinkReplaceStage
+from ...stages.MDSectionsLinkProcessingStage import MDSectionsLinkProcessingStage
+from ...stages.MDFigureMapReplaceStage import MDFigureMapReplaceStage
 
 __all__ = [
     "MDSectionCopyImagesStage",
-    "InternalLinkProcessorStage",
-    "MDCrosslinkReplaceStage",
+    "MDSectionsLinkProcessingStage",
+    "MDFigureMapReplaceStage",
 ]

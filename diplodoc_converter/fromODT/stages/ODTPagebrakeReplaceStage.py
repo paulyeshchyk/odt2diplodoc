@@ -6,7 +6,7 @@ from diplodoc_converter.fromODT.odt.preprocessors.OdtPreprocessor_PageBreak impo
 )
 
 
-class ODTReplacePagebrakeStage(Stage):
+class ODTPagebrakeReplaceStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
         odt_temp_path = Os_File_Utils.odt_temp_path(ctx.config)
 
