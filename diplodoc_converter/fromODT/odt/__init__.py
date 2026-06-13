@@ -1,3 +1,5 @@
-from .process_crossref import OdtCrossrefProcessor
+from .process_odt_delegate import process_odt_with_delegate
 
-__all__ = ["OdtCrossrefProcessor"]
+__all__ = [
+    "process_odt_with_delegate",
+]

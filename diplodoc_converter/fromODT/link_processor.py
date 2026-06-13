@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from diplodoc_converter.fromODT.pipeline.stages.SectionsStage import SectionsStage
+from diplodoc_converter.fromODT.stages.MDSectionsStage import MDSectionsStage
 from .utils import generate_folder_name
 from .section_parser import Section
 
@@ -45,7 +45,7 @@ def build_slug_and_anchor_maps(
 
     slug_map = {}
     anchor_map = {}
-    for sec in SectionsStage.flatten_sections(sections):
+    for sec in MDSectionsStage.flatten_sections(sections):
         if sec.full_slug is None:
             raise RuntimeError(f"full_slug не установлен для секции '{sec.title}'")
         rel_path = sec.full_slug / "index.md"

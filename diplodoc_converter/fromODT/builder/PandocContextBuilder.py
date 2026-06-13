@@ -1,22 +1,15 @@
 from pathlib import Path
-from diplodoc_converter.fromODT.ConverterSettings import ConverterSettings
-from diplodoc_converter.fromODT.context.context_utils import (
-    get_temp_dir,
-    get_temp_md,
-    get_working_path,
-)
+from diplodoc_converter.fromODT.os_file_utils import Os_File_Utils
 from diplodoc_converter.fromODT.pandoc_wrapper import PandocContext
 from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
 
 
 class PandocContextBuilder:
     def build(self, ctx: ConversionContext) -> PandocContext:
-        temp_dir = get_temp_dir(ctx)
-        working_path = get_working_path(ctx)
-        temp_dir.mkdir(parents=True, exist_ok=True)
-        odt_path_absolute = Path(working_path).absolute()
-        temp_media = temp_dir / ConverterSettings.MEDIA_DIR
-        temp_md = get_temp_md(ctx)
+        odt_temp_path = Os_File_Utils.odt_temp_path(ctx.config)
+        odt_path_absolute = Path(odt_temp_path).absolute()
+        temp_media = Os_File_Utils.odt_temp_media_path(ctx.config)
+        temp_md = Os_File_Utils.md_temp_path(ctx.config)
         return PandocContext(
             odt_path=odt_path_absolute,
             temp_md_path=temp_md,

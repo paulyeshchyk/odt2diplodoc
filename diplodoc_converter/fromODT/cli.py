@@ -2,27 +2,39 @@ import argparse
 from diplodoc_converter.fromODT.Config import ConfigBuilder
 from diplodoc_converter.fromODT.ConverterMessages import ConverterMessages
 from diplodoc_converter.fromODT.config import CacheSettings
-from diplodoc_converter.fromODT.pipeline.stages.GlobalStrategiesStage import (
+from diplodoc_converter.fromODT.pipeline import Pipeline
+from diplodoc_converter.fromODT.stages.GlobalStrategiesStage import (
     GlobalStrategiesStage,
 )
-from diplodoc_converter.fromODT.pipeline.stages.MarkdownStage import MarkdownStage
-from diplodoc_converter.fromODT.pipeline.stages.SectionStrategiesStage import (
-    SectionStrategiesStage,
+from diplodoc_converter.fromODT.stages.MDParserStage import MDParserStage
+from diplodoc_converter.fromODT.stages.ODTCloneStage import ODTCloneStage
+from diplodoc_converter.fromODT.stages.ODTCrossrefStage import ODTCrossrefStage
+from diplodoc_converter.fromODT.stages.ODTStyleNoteStage import (
+    ODTStyleNoteStage,
 )
-from diplodoc_converter.fromODT.pipeline.pipeline import Pipeline
-from diplodoc_converter.fromODT.pipeline.stages.SectionsStage import SectionsStage
-from diplodoc_converter.fromODT.pipeline.stages.WipeCacheStage import WipeCacheStage
-from diplodoc_converter.fromODT.pipeline.stages.WipeOutputStage import WipeOutputStage
-from diplodoc_converter.fromODT.pipeline.stages.CopyImagesToSectionStage import (
-    CopyImagesToSectionStage,
+from diplodoc_converter.fromODT.stages.ODTReplacePagebrakeStage import (
+    ODTReplacePagebrakeStage,
 )
-from diplodoc_converter.fromODT.pipeline.stages.InternalLinkProcessorStage import (
+from diplodoc_converter.fromODT.stages.MDSectionStrategiesStage import (
+    MDSectionStrategiesStage,
+)
+from diplodoc_converter.fromODT.stages.MDSectionsStage import MDSectionsStage
+from diplodoc_converter.fromODT.stages.DirCacheWipeStage import (
+    DirCacheWipeStage,
+)
+from diplodoc_converter.fromODT.stages.DirOutputWipeStage import (
+    DirOutputWipeStage,
+)
+from diplodoc_converter.fromODT.stages.MDSectionCopyImagesStage import (
+    MDSectionCopyImagesStage,
+)
+from diplodoc_converter.fromODT.stages.InternalLinkProcessorStage import (
     InternalLinkProcessorStage,
 )
-from diplodoc_converter.fromODT.pipeline.stages.ReplaceCrossLinksStage import (
-    ReplaceCrossLinksStage,
+from diplodoc_converter.fromODT.stages.MDCrosslinkReplaceStage import (
+    MDCrosslinkReplaceStage,
 )
-from diplodoc_converter.fromODT.pipeline.stages.YamlStage import YamlStage
+from diplodoc_converter.fromODT.stages.YamlStage import YamlStage
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 
 
@@ -152,16 +164,20 @@ def run_import(args):
 
     pipeline = Pipeline(
         [
-            WipeOutputStage(),
-            MarkdownStage(),
+            DirOutputWipeStage(),
+            ODTCloneStage(),
+            ODTCrossrefStage(),
+            ODTStyleNoteStage(),
+            ODTReplacePagebrakeStage(),
+            MDParserStage(),
             GlobalStrategiesStage(),
-            SectionsStage(),
+            MDSectionsStage(),
             InternalLinkProcessorStage(),
-            CopyImagesToSectionStage(),
-            ReplaceCrossLinksStage(),
-            SectionStrategiesStage(),
+            MDSectionCopyImagesStage(),
+            MDCrosslinkReplaceStage(),
+            MDSectionStrategiesStage(),
             YamlStage(),
-            WipeCacheStage(),
+            DirCacheWipeStage(),
         ]
     )
     pipeline.run(ctx)
