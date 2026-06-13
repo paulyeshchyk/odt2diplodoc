@@ -15,6 +15,9 @@ function Blocks(blocks)
     local new_blocks = {}
     local i = 1
     local n = #blocks
+    
+    -- io.stderr:write("Lua filter: restore notes\n")
+    -- io.stderr:write("Lua filter: restore notes" .. tostring(style) .. "\n")
 
     while i <= n do
         local el = blocks[i]
@@ -29,11 +32,11 @@ function Blocks(blocks)
             style = el.attr.attributes['custom-style']
         end
 
-        if style then
-            io.stderr:write("УРА! Нашли стиль абзаца: " .. tostring(style) .. "\n")
-        else
-            io.stderr:write("Обычный абзац без стиля\n")
-        end
+        -- if style then
+        --     io.stderr:write("Нашли стиль абзаца: " .. tostring(style) .. "\n")
+        -- else
+        --     io.stderr:write("Обычный абзац без стиля\n")
+        -- end
 
         if el.t == 'Para' and style and note_styles[style] then
             

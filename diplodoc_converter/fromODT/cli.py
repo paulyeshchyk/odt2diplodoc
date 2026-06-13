@@ -1,13 +1,28 @@
 import argparse
-from diplodoc_converter.fromODT.converter import convert_odt_to_diplodoc
-from diplodoc_converter.fromODT.config import (
-    CacheSettings,
-    LuaOptions,
-    ParserSettings,
-    ConversionConfig,
-    OdtCrossReferences,
+from diplodoc_converter.fromODT.Config import ConfigBuilder
+from diplodoc_converter.fromODT.ConverterMessages import ConverterMessages
+from diplodoc_converter.fromODT.config import CacheSettings
+from diplodoc_converter.fromODT.pipeline.stages.GlobalStrategiesStage import (
+    GlobalStrategiesStage,
 )
-from diplodoc_converter.fromODT.config import PandocOptions
+from diplodoc_converter.fromODT.pipeline.stages.MarkdownStage import MarkdownStage
+from diplodoc_converter.fromODT.pipeline.stages.SectionStrategiesStage import (
+    SectionStrategiesStage,
+)
+from diplodoc_converter.fromODT.pipeline.pipeline import Pipeline
+from diplodoc_converter.fromODT.pipeline.stages.SectionsStage import SectionsStage
+from diplodoc_converter.fromODT.pipeline.stages.WipeCacheStage import WipeCacheStage
+from diplodoc_converter.fromODT.pipeline.stages.WipeOutputStage import WipeOutputStage
+from diplodoc_converter.fromODT.pipeline.stages.CopyImagesToSectionStage import (
+    CopyImagesToSectionStage,
+)
+from diplodoc_converter.fromODT.pipeline.stages.InternalLinkProcessorStage import (
+    InternalLinkProcessorStage,
+)
+from diplodoc_converter.fromODT.pipeline.stages.ReplaceCrossLinksStage import (
+    ReplaceCrossLinksStage,
+)
+from diplodoc_converter.fromODT.pipeline.stages.YamlStage import YamlStage
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 
 
@@ -125,48 +140,31 @@ def run_export(args):
     run()
 
 
+messages = ConverterMessages(lang="ru")
+
+
 def run_import(args):
-    lua_filters = []
-    if args.lua_filter:
-        for item in args.lua_filter:
-            parsed = _parse_lua_filters(item)
-            if parsed:
-                lua_filters.extend(parsed)
 
-    parser_settings = ParserSettings(
-        max_heading_level_for_single_page=args.max_heading_level
+    config_builder = ConfigBuilder()
+    ctx = config_builder.build_conversion_context(args, messages)
+    if ctx.config.cache_settings is None:
+        ctx.config.cache_settings = CacheSettings()
+
+    pipeline = Pipeline(
+        [
+            WipeOutputStage(),
+            MarkdownStage(),
+            GlobalStrategiesStage(),
+            SectionsStage(),
+            InternalLinkProcessorStage(),
+            CopyImagesToSectionStage(),
+            ReplaceCrossLinksStage(),
+            SectionStrategiesStage(),
+            YamlStage(),
+            WipeCacheStage(),
+        ]
     )
-    lua_options = LuaOptions(lua_filter_path=lua_filters, lua_dir=args.lua_dir)
-
-    if args.pandoc_format:
-        pandoc_options = PandocOptions(raw_format=args.pandoc_format)
-    else:
-        pandoc_options = PandocOptions(
-            format="markdown",
-            raw_html=True,
-            pipe_tables=True,
-            backtick_code_blocks=True,
-            lua_options=lua_options,
-        )
-
-    odtCross = OdtCrossReferences(
-        enable_crossref=args.enable_crossref,
-        crossref_metadata_file=args.crossref_metadata_file,
-    )
-
-    cache_settings = CacheSettings(
-        temp_dir=args.temp_dir, keep_cache=args.keep_cache, reuse_cache=args.reuse_cache
-    )
-
-    config = ConversionConfig(
-        odt_path=args.odt_path,
-        output_dir=args.output_dir,
-        cache_settings=cache_settings,
-        parser_settings=parser_settings,
-        pandoc_options=pandoc_options,
-        odt_crossreferences_options=odtCross,
-    )
-    convert_odt_to_diplodoc(config)
+    pipeline.run(ctx)
 
 
 if __name__ == "__main__":

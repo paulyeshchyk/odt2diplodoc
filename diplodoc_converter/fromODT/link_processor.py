@@ -2,9 +2,11 @@
 
 import re
 from pathlib import Path
-from typing import Dict, List, Tuple
-from .utils import generate_folder_name, slugify
-from .section_parser import Section, flatten_sections
+from typing import Dict, List, Optional, Tuple
+
+from diplodoc_converter.fromODT.pipeline.stages.SectionsStage import SectionsStage
+from .utils import generate_folder_name
+from .section_parser import Section
 
 
 def normalize_title(title: str) -> str:
@@ -14,14 +16,13 @@ def normalize_title(title: str) -> str:
 
 
 def build_slug_and_anchor_maps(
-    sections: List[Section],
+    sections: Optional[List[Section]],
     base_output_dir: Path,
 ) -> Tuple[Dict[str, Path], Dict[str, Path]]:
     """
     Присваивает секциям slug (имя папки) и full_slug (путь от корня).
     Возвращает (slug_map, anchor_map)
     """
-    slug_counter = {}
 
     def assign_slugs(
         sec: Section,
@@ -38,12 +39,13 @@ def build_slug_and_anchor_maps(
         for child in sec.children:
             assign_slugs(child, sec.full_slug)
 
-    for sec in sections:
-        assign_slugs(sec, Path())
+    if sections:
+        for sec in sections:
+            assign_slugs(sec, Path())
 
     slug_map = {}
     anchor_map = {}
-    for sec in flatten_sections(sections):
+    for sec in SectionsStage.flatten_sections(sections):
         if sec.full_slug is None:
             raise RuntimeError(f"full_slug не установлен для секции '{sec.title}'")
         rel_path = sec.full_slug / "index.md"

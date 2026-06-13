@@ -1,28 +1,32 @@
 # diplodoc_converter/pandoc_wrapper.py
-import os
-import pypandoc
+from dataclasses import dataclass
 from pathlib import Path
-from .utils import ensure_dir
 from .config import PandocOptions
 
 
-def convert_odt_to_markdown(
-    odt_path: Path,
-    temp_md_path: Path,
-    temp_media_dir: Path,
-    pandoc_options: PandocOptions,
-) -> str:
-    ensure_dir(temp_media_dir)
-    fmt = pandoc_options.to_pandoc_string()
-    print(f"Формат Pandoc: -t {fmt}")
+@dataclass
+class PandocContext:
+    odt_path: Path
+    temp_md_path: Path
+    temp_media_dir: Path
 
-    original_cwd = Path.cwd()
-    target_dir = temp_media_dir.parent
-    os.chdir(target_dir)
-    try:
-        extra_args = ["--extract-media=media"]
-        extra_args.append(f"--wrap=none")
 
+@dataclass
+class PyPandocContext:
+    source_file: str
+    pandoc_fmt: str
+    output_fmt: str
+    extra_args: list[str]
+    outputfile: str
+
+
+class PyPandocContextBuilder:
+    def insert_lua_filters(
+        self,
+        extra_args: list[str],
+        original_cwd: Path,
+        pandoc_options: PandocOptions,
+    ):
         # Lua-фильтры
         if pandoc_options.lua_options and pandoc_options.lua_options.lua_filter_path:
             lua_dir = None
@@ -45,18 +49,27 @@ def convert_odt_to_markdown(
                 else:
                     print(f"Предупреждение: Lua-фильтр не найден: {filter_path}")
 
-        source_file = Path(odt_path)
+    def build(
+        self,
+        original_cwd: Path,
+        pandoc_ctx: PandocContext,
+        pandoc_options: PandocOptions,
+    ):
+        fmt = pandoc_options.to_pandoc_string()
+        print(f"Формат Pandoc: -t {fmt}")
+
+        extra_args = ["--extract-media=media"]
+        extra_args.append("--wrap=none")
+
+        self.insert_lua_filters(extra_args, original_cwd, pandoc_options)
+
+        source_file = Path(pandoc_ctx.odt_path)
         if not source_file.is_absolute():
             source_file = original_cwd / source_file
-
-        pypandoc.convert_file(
-            source_file=str(source_file),
-            to=fmt,
-            format="odt",
-            extra_args=extra_args,
-            outputfile=temp_md_path.name,
+        return PyPandocContext(
+            str(source_file),
+            fmt,
+            "odt",
+            extra_args,
+            pandoc_ctx.temp_md_path.name,
         )
-        result = temp_md_path.read_text(encoding="utf-8")
-    finally:
-        os.chdir(original_cwd)
-    return result
