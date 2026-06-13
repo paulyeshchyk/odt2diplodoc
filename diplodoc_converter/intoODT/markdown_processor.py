@@ -14,6 +14,7 @@ import urllib.parse
 from pathlib import Path
 from typing import Dict
 
+
 class MarkdownProcessor:
     """Преобразует содержимое отдельного md-файла."""
 
@@ -26,74 +27,80 @@ class MarkdownProcessor:
     @staticmethod
     def normalize_bullet_lists(content: str) -> str:
         """
-        Заменяет маркеры списков '+' на стандартные '-', 
+        Заменяет маркеры списков '+' на стандартные '-',
         а также обеспечивает пустую строку перед списком, чтобы предотвратить слипание.
         """
         # Шаг 1: Заменяем '+' на '-' только в начале строк (учитывая пробелы перед ними)
         # re.MULTILINE обязателен
-        content = re.sub(r'^(\s*)\+\s+', r'\1- ', content, flags=re.MULTILINE)
+        content = re.sub(r"^(\s*)\+\s+", r"\1- ", content, flags=re.MULTILINE)
 
         # Шаг 2: Исправляем слипание с предыдущим текстом.
-        # Ищем ситуацию, когда идет строка с текстом (не заголовок и не пустая), 
+        # Ищем ситуацию, когда идет строка с текстом (не заголовок и не пустая),
         # а на следующей строке сразу начинается список '- '.
         # Добавляем между ними правильный перенос строки.
         def list_spacing_replacer(match):
             prev_line = match.group(1)
             list_line = match.group(2)
             # Если предыдущая строка уже пустая или это заголовок/блок кода, не трогаем
-            if not prev_line.strip() or prev_line.strip().startswith(('#', '-', '*', '+', '`')):
+            if not prev_line.strip() or prev_line.strip().startswith(
+                ("#", "-", "*", "+", "`")
+            ):
                 return match.group(0)
             return f"{prev_line}\n\n{list_line}"
 
         # Ищем пару строк: любая строка -> перенос строки -> строка списка
-        pattern = r'^([^\n]+)\n(\s*-\s+.*)$'
+        pattern = r"^([^\n]+)\n(\s*-\s+.*)$"
         return re.sub(pattern, list_spacing_replacer, content, flags=re.MULTILINE)
 
     @staticmethod
     def remove_frontmatter(content: str) -> str:
         """Удаляет YAML-блок в начале файла (между --- и ---)."""
         lines = content.splitlines()
-        if lines and lines[0].strip() == '---':
+        if lines and lines[0].strip() == "---":
             end_idx = 1
-            while end_idx < len(lines) and lines[end_idx].strip() != '---':
+            while end_idx < len(lines) and lines[end_idx].strip() != "---":
                 end_idx += 1
             if end_idx < len(lines):
-                return '\n'.join(lines[end_idx + 1:])
+                return "\n".join(lines[end_idx + 1 :])
             else:
-                return '\n'.join(lines[1:])
+                return "\n".join(lines[1:])
         return content
 
     @staticmethod
-    def remove_empty_headings(content: str, file_path: Path) -> str:
+    def remove_empty_headings(
+        content: str,
+        file_path: Path,
+    ) -> str:
         """Удаляет строки, содержащие только # и пробелы (пустые заголовки)."""
         lines = content.splitlines()
         cleaned = []
         changed = False
         for line in lines:
-            if re.match(r'^\\#', line):   # экранированный #
+            if re.match(r"^\\#", line):  # экранированный #
                 cleaned.append(line)
                 continue
-            if re.match(r'^#{1,6}\s*$', line):
+            if re.match(r"^#{1,6}\s*$", line):
                 # print(f"Пустой заголовок в {file_path}: '{line}' - удалён")
                 changed = True
                 continue
             cleaned.append(line)
-        return '\n'.join(cleaned) if changed else content
+        return "\n".join(cleaned) if changed else content
 
     def replace_note_blocks(self, content: str) -> str:
         """Заменяет {% note ... %} на fenced div с custom-style."""
+
         def replacer(match):
             note_type = match.group(1).lower()
-            title = match.group(2)          # может быть None
+            title = match.group(2)  # может быть None
             inner = match.group(3).strip()
 
             style_map = {
-                'tip': 'NoteTip',
-                'warning': 'NoteWarning',
-                'alert': 'NoteAlert',
-                'info': 'NoteInfo'
+                "tip": "NoteTip",
+                "warning": "NoteWarning",
+                "alert": "NoteAlert",
+                "info": "NoteInfo",
             }
-            style = style_map.get(note_type, 'Note')
+            style = style_map.get(note_type, "Note")
 
             # Если есть заголовок, добавим его жирным в начало содержимого
             if title:
@@ -108,7 +115,7 @@ class MarkdownProcessor:
     def _clean_markdown_link(raw_link: str) -> str:
         """Декодирует URL и очищает строку ссылки от переносов и title."""
         # Склеиваем случайные переносы строк
-        link = re.sub(r'\s+', '', raw_link)
+        link = re.sub(r"\s+", "", raw_link)
         # Декодируем %D0%...
         link = urllib.parse.unquote(link)
         # Отрезаем "title", если он передан в конце (например: `(link.md "Title")`)
@@ -117,31 +124,41 @@ class MarkdownProcessor:
     @staticmethod
     def _normalize_anchor_text(text: str) -> str:
         """Транслитерирует и очищает текст подзаголовка для использования в ID."""
-        clean = transliterate(text.lower()).replace(' ', '-')
-        return re.sub(r'[^a-zA-Z0-9_.-]', '_', clean)
+        clean = transliterate(text.lower()).replace(" ", "-")
+        return re.sub(r"[^a-zA-Z0-9_.-]", "_", clean)
 
-    def _resolve_single_link(self, text: str, raw_link: str, current_node: DocNode) -> str:
+    def _resolve_single_link(
+        self,
+        text: str,
+        raw_link: str,
+        current_node: DocNode,
+    ) -> str:
         """
-        Бизнес-логика разбора одной ссылки. 
+        Бизнес-логика разбора одной ссылки.
         Возвращает либо измененную внутреннюю ссылку, либо исходную.
         """
-        if raw_link.startswith(('http://', 'https://', 'mailto:', 'ftp:')):
+        if raw_link.startswith(("http://", "https://", "mailto:", "ftp:")):
             return f"[{text}]({raw_link})"
 
-        if raw_link.startswith('#fig-'):
+        if raw_link.startswith("#fig-"):
             return f"[{text}]({raw_link})"
 
         # 1. Очистка и деление на файл и инлайн-якорь
         full_link = self._clean_markdown_link(raw_link)
-        path_part, anchor_part = full_link.split('#', 1) if '#' in full_link else (full_link, '')
-        path_part_clean = path_part.lstrip('/')
+        path_part, anchor_part = (
+            full_link.split("#", 1) if "#" in full_link else (full_link, "")
+        )
+        path_part_clean = path_part.lstrip("/")
 
         # 2. Быстрый выход: ссылка на инлайн-якорь внутри этой же статьи
         if not path_part_clean and anchor_part:
             return f"[{text}](#{self._normalize_anchor_text(anchor_part)})"
 
         # 3. Быстрый выход: ссылки на статические медиа-файлы
-        if any(path_part_clean.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.pdf', '.zip']):
+        if any(
+            path_part_clean.lower().endswith(ext)
+            for ext in [".png", ".jpg", ".jpeg", ".gif", ".svg", ".pdf", ".zip"]
+        ):
             return f"[{text}]({raw_link})"
 
         # 4. Разрешение путей (Файловая система)
@@ -189,7 +206,11 @@ class MarkdownProcessor:
         current_node_path = current_node.path
         return current_node_path.parent
 
-    def convert_internal_links(self, content: str, current_node: DocNode) -> str:
+    def convert_internal_links(
+        self,
+        content: str,
+        current_node: DocNode,
+    ) -> str:
         """Точка входа для парсинга внутренних ссылок."""
         if not current_node.path:
             return content
@@ -197,7 +218,7 @@ class MarkdownProcessor:
         def replacer(match):
             whole_match = match.group(0)
             # Если регулярка поймала картинку `![alt](src)`, возвращаем её нетронутой
-            if whole_match.startswith('!'):
+            if whole_match.startswith("!"):
                 return whole_match
 
             text = match.group(1).strip()
@@ -206,10 +227,14 @@ class MarkdownProcessor:
             return self._resolve_single_link(text, raw_link, current_node)
 
         # Ловим обычные ссылки и ссылки-картинки одним махом
-        pattern = r'!?\[([\s\S]*?)\]\(([\s\S]*?)\)'
+        pattern = r"!?\[([\s\S]*?)\]\(([\s\S]*?)\)"
         return re.sub(pattern, replacer, content)
 
-    def process_images(self, content: str, current_node: DocNode) -> str:
+    def process_images(
+        self,
+        content: str,
+        current_node: DocNode,
+    ) -> str:
         if not current_node.path:
             return content
 
@@ -220,17 +245,21 @@ class MarkdownProcessor:
 
             extracted_caption = ""
             if figure_html:
-                caption_match = re.search(r'<figcaption[^>]*>(.*?)</figcaption>', figure_html, re.DOTALL)
+                caption_match = re.search(
+                    r"<figcaption[^>]*>(.*?)</figcaption>", figure_html, re.DOTALL
+                )
                 if caption_match:
                     raw_caption = caption_match.group(1)
-                    cleaned = re.sub(r'<[^>]+>', '', raw_caption).strip()
-                    extracted_caption = re.sub(r'^(Рисунок|Рис)\s*\d+\.\s*', '', cleaned, flags=re.IGNORECASE).strip()
+                    cleaned = re.sub(r"<[^>]+>", "", raw_caption).strip()
+                    extracted_caption = re.sub(
+                        r"^(Рисунок|Рис)\s*\d+\.\s*", "", cleaned, flags=re.IGNORECASE
+                    ).strip()
 
             # Нормализация путей
-            img_src = re.sub(r'/+', '/', img_src)
-            img_src = re.sub(r'^\./', '', img_src)
+            img_src = re.sub(r"/+", "/", img_src)
+            img_src = re.sub(r"^\./", "", img_src)
 
-            parent = self.getDocNode_parent_dir(current_node);
+            parent = self.getDocNode_parent_dir(current_node)
             abs_img = (parent / img_src).resolve()
             try:
                 rel_img = abs_img.relative_to(self.root_dir)
@@ -238,9 +267,9 @@ class MarkdownProcessor:
                 return match.group(0)
 
             rel_img = MdToOdtConfig.normalize_rel_path(rel_img)
-            rel_img_str = './' + rel_img.as_posix()
-            rel_img_str = re.sub(r'/\./', '/', rel_img_str)
-            rel_img_str = re.sub(r'/+', '/', rel_img_str)
+            rel_img_str = "./" + rel_img.as_posix()
+            rel_img_str = re.sub(r"/\./", "/", rel_img_str)
+            rel_img_str = re.sub(r"/+", "/", rel_img_str)
 
             full_img_path = self.temp_dir / rel_img
             width = 0
@@ -255,24 +284,36 @@ class MarkdownProcessor:
 
             # ЛОГИКА ДЛЯ РЕЖИМА INSIDE
             if MdToOdtConfig.CAPTION_POSITION == "inside":
-                size_attr = f"{{ width=100% }}" if width > MdToOdtConfig.WIDTH_THRESHOLD else ""
+                size_attr = (
+                    "{{ width=100% }}" if width > MdToOdtConfig.WIDTH_THRESHOLD else ""
+                )
                 markdown_image = f"![]({rel_img_str}){size_attr}"
                 if final_caption_text:
                     # Оставляем только чистые маркеры
-                    markdown_image += f" %%%CAPTION_START%%%{final_caption_text}%%%CAPTION_END%%%"
+                    markdown_image += (
+                        f" %%%CAPTION_START%%%{final_caption_text}%%%CAPTION_END%%%"
+                    )
                 return markdown_image
-
 
             else:
                 # Режим BELOW (стандартный текст снизу, без изменений)
-                size_attr = "{ width=100% }" if width > MdToOdtConfig.WIDTH_THRESHOLD else ""
+                size_attr = (
+                    "{ width=100% }" if width > MdToOdtConfig.WIDTH_THRESHOLD else ""
+                )
                 markdown_image = f"![{final_caption_text}]({rel_img_str}){size_attr}"
                 return markdown_image
 
-        pattern = r'!\[([^\]]*)\]\(([^)]+)\)(\s*\{[^}]+\})?(?:\s*(<figure>.*?</figure>))?'
+        pattern = (
+            r"!\[([^\]]*)\]\(([^)]+)\)(\s*\{[^}]+\})?(?:\s*(<figure>.*?</figure>))?"
+        )
         return re.sub(pattern, replace_path, content, flags=re.DOTALL)
 
-    def shift_internal_headings(self, content: str, node_level: int, node_anchor: str) -> str:
+    def shift_internal_headings(
+        self,
+        content: str,
+        node_level: int,
+        node_anchor: str,
+    ) -> str:
         """Сдвигает уровни заголовков и генерирует для них УНИКАЛЬНЫЕ ЛАТИНСКИЕ ID."""
 
         shift = node_level + 1
@@ -284,8 +325,8 @@ class MarkdownProcessor:
             new_level = min(len(hashes) + shift, MdToOdtConfig.MAX_HEADING_LEVEL)
 
             # Транслитерируем текст подзаголовка для безопасного ID
-            sub_anchor = transliterate(title_text.lower()).replace(' ', '-')
-            sub_anchor = re.sub(r'[^a-zA-Z0-9_.-]', '_', sub_anchor)
+            sub_anchor = transliterate(title_text.lower()).replace(" ", "-")
+            sub_anchor = re.sub(r"[^a-zA-Z0-9_.-]", "_", sub_anchor)
 
             # Базовый составной ID
             full_heading_id = f"{node_anchor}_{sub_anchor}"
@@ -303,17 +344,25 @@ class MarkdownProcessor:
 
             return f"{'#' * new_level} {title_text} {{#{full_heading_id} .unnumbered}}"
 
-        pattern = r'^(#{1,6})\s+(.+)$'
+        pattern = r"^(#{1,6})\s+(.+)$"
         return re.sub(pattern, replacer, content, flags=re.MULTILINE)
-        
-    def process(self, content: str, current_node: DocNode) -> str:
+
+    def process(
+        self,
+        content: str,
+        current_node: DocNode,
+    ) -> str:
         content = self.remove_frontmatter(content)
         rp = current_node.rel_path
         if rp:
             node_anchor = self.anchor_map.get(rp, "doc")
-            content = self.shift_internal_headings(content, current_node.level, node_anchor)
+            content = self.shift_internal_headings(
+                content, current_node.level, node_anchor
+            )
             content = self.normalize_bullet_lists(content)
-            content = self.remove_empty_headings(content, current_node.path if current_node.path else Path("vnode"))
+            content = self.remove_empty_headings(
+                content, current_node.path if current_node.path else Path("vnode")
+            )
             content = self.replace_note_blocks(content)
             content = self.process_images(content, current_node)
             content = self.convert_internal_links(content, current_node)

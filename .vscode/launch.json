@@ -61,20 +61,20 @@
             ]
         },
         {
-            "name": "Python: Экспорт в ODT (build)",
+            "name": "Python: MD -> ODT",
             "type": "debugpy",
             "request": "launch",
             "module": "diplodoc_converter.fromODT.cli",
             "args": [
                 "build",
                 "-i",
-                "D:\\projects\\private\\gs10_odt\\docs\\ru_orig",
+                "C:\\projects\\ascon\\GULF_Help\\docs\\ru",
                 "-o",
-                "D:\\projects\\private\\gs10_odt\\calibr.odt",
+                "C:\\projects\\private\\gs10_odt\\calibr.odt",
                 "--width-threshold",
                 "700",
                 "--reference",
-                "D:\\projects\\private\\gs10_odt\\reference.odt"
+                "C:\\projects\\private\\gs10_odt\\reference.odt"
             ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
@@ -83,19 +83,19 @@
             }
         },
         {
-            "name": "Python: Импорт ODT в Diplodoc (import)",
+            "name": "Python: ODT -> MD",
             "type": "debugpy",
             "request": "launch",
             "module": "diplodoc_converter.fromODT.cli",
             "args": [
                 "import",
-                "D:\\projects\\private\\gs10_odt\\calibr.odt",
-                "D:\\projects\\ascon\\GULF_Help\\docs\\ru",
+                "C:\\projects\\private\\gs10_odt\\calibr.odt",
+                "C:\\projects\\private\\gs10_odt\\docs\\ru",
                 "--enable-crossref",
                 "--max-heading-level",
                 "4",
                 "--lua-filter",
-                "no-img-size.lua, logging.lua",
+                "no-img-size.lua, logging.lua, restore_notes.lua",
                 "--lua-dir",
                 "./lua",
             ],

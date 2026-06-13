@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+
 @dataclass
 class CacheSettings:
     """
@@ -12,9 +13,11 @@ class CacheSettings:
     keep_cache: если True, временные файлы НЕ удаляются после завершения
     reuse_cache: если True и временные файлы уже существуют, Pandoc НЕ вызывается повторно
     """
+
     temp_dir: str = ".temp_convert"
     keep_cache: bool = False
     reuse_cache: bool = False
+
 
 @dataclass
 class ParserSettings:
@@ -25,34 +28,42 @@ class ParserSettings:
         По умолчанию 6 – все заголовки (H1-H6) становятся отдельными страницами.
         Если установить 2, то только H1 и H2 будут разделены, а H3 и ниже останутся внутри.
     """
+
     max_heading_level_for_single_page: int = 6
+    normalize_headings: bool = True
+
 
 @dataclass
 class LuaOptions:
     lua_filter_path: Optional[List[str]] = field(default_factory=list)
     lua_dir: Optional[str] = None
 
+
 @dataclass
 class PandocOptions:
     """
     Настройки формата вывода Pandoc.
     """
+
     format: str = "markdown"
     pipe_tables: Optional[bool] = None
     backtick_code_blocks: Optional[bool] = None
     link_attributes: Optional[bool] = None
     raw_html: Optional[bool] = None
     raw_format: Optional[str] = None
-    lua_options: Optional[LuaOptions] = None    
+    lua_options: Optional[LuaOptions] = None
 
     def to_pandoc_string(self) -> str:
         """Формирует строку вида "markdown+pipe_tables-raw_html"."""
         if self.raw_format is not None:
             return self.raw_format
-        
+
         result = self.format
         for field_name, field_value in self.__dict__.items():
-            if field_name in ("format", "raw_format", "lua_options") or field_value is None:
+            if (
+                field_name in ("format", "raw_format", "lua_options")
+                or field_value is None
+            ):
                 continue
             if field_value:
                 result += f"+{field_name}"
@@ -60,19 +71,22 @@ class PandocOptions:
                 result += f"-{field_name}"
         return result
 
+
 @dataclass
 class OdtCrossReferences:
-   enable_crossref: bool = False
-   crossref_metadata_file: Optional[str] = None 
-   
+    enable_crossref: bool = False
+    crossref_metadata_file: Optional[str] = None
+
+
 @dataclass
 class ConversionConfig:
     """
     Полная конфигурация конвертации.
     """
-    odt_path: str                   # путь к исходному ODT
-    output_dir: str                 # куда сохранить результат
-    cache_settings: CacheSettings   # настройки кэша (можно импортировать позже)
-    parser_settings: ParserSettings # настройки парсинга (по умолчанию все заголовки)
+
+    odt_path: str  # путь к исходному ODT
+    output_dir: str  # куда сохранить результат
+    cache_settings: CacheSettings  # настройки кэша (можно импортировать позже)
+    parser_settings: ParserSettings  # настройки парсинга (по умолчанию все заголовки)
     pandoc_options: PandocOptions
     odt_crossreferences_options: OdtCrossReferences

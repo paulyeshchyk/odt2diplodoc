@@ -16,6 +16,7 @@ from .strategies import global_strategies, section_strategies
 
 class ConverterSettings:
     """Константы, используемые в конвертере."""
+
     MEDIA_DIR = "media"
     TEMP_MD_FILENAME = "full_doc.md"
     TEMP_ODT_FILENAME = "crossref_input.odt"
@@ -25,6 +26,7 @@ class ConverterSettings:
 
 class ConverterMessages:
     """Локализованные сообщения для пользователя."""
+
     def __init__(self, lang="ru"):
         self.lang = lang
         # Здесь можно расширить под другие языки
@@ -50,6 +52,8 @@ class ConverterMessages:
 
     def get(self, key, **kwargs):
         msg = self.msgs.get(self.lang, self.msgs["ru"]).get(key, key)
+        if msg is None:
+            return key
         return msg.format(**kwargs) if kwargs else msg
 
 
@@ -75,15 +79,20 @@ def convert_odt_to_diplodoc(config: ConversionConfig) -> None:
 
     process_internal_links_for_sections(sections, output_dir_absolute)
 
-    temp_media_dir = Path(config.cache_settings.temp_dir).absolute() / ConverterSettings.MEDIA_DIR
+    temp_media_dir = (
+        Path(config.cache_settings.temp_dir).absolute() / ConverterSettings.MEDIA_DIR
+    )
     copy_images_to_sections(sections, output_dir_absolute, temp_media_dir)
 
-    if getattr(config.pandoc_options, 'enable_crossref', False):
+    if getattr(config.pandoc_options, "enable_crossref", False):
         # Загружаем fig_map из сохранённого JSON
-        temp_odt = Path(config.cache_settings.temp_dir).absolute() / ConverterSettings.TEMP_ODT_FILENAME
+        temp_odt = (
+            Path(config.cache_settings.temp_dir).absolute()
+            / ConverterSettings.TEMP_ODT_FILENAME
+        )
         fig_map_path = temp_odt.with_suffix(ConverterSettings.FIG_MAP_EXT)
         if fig_map_path.exists():
-            with open(fig_map_path, 'r', encoding='utf-8') as f:
+            with open(fig_map_path, "r", encoding="utf-8") as f:
                 fig_map = json.load(f)
             replace_crossref_links(sections, fig_map, output_dir_absolute)
         else:
@@ -94,16 +103,22 @@ def convert_odt_to_diplodoc(config: ConversionConfig) -> None:
             strategy.transform_section(sec)
 
     print(messages.get("writing_tree"))
-    write_section_tree(sections, output_dir_absolute, root_title=ConverterSettings.ROOT_TITLE)
+    write_section_tree(
+        sections, output_dir_absolute, root_title=ConverterSettings.ROOT_TITLE
+    )
     wipe_cache_if_need(config.cache_settings)
     print(messages.get("done", output_dir=config.output_dir))
 
 
-def process_internal_links_for_sections(sections: List[Section], output_dir: Path) -> None:
+def process_internal_links_for_sections(
+    sections: List[Section], output_dir: Path
+) -> None:
     print(messages.get("internal_links"))
     slug_map, anchor_map = build_slug_and_anchor_maps(sections, output_dir)
     for sec in flatten_sections(sections):
-        sec.body = replace_internal_links(sec.body, slug_map, anchor_map, str(sec.full_slug).replace("\\", "/"))
+        sec.body = replace_internal_links(
+            sec.body, slug_map, anchor_map, str(sec.full_slug).replace("\\", "/")
+        )
 
 
 def build_markdown(config: ConversionConfig) -> str:
@@ -116,7 +131,7 @@ def build_markdown(config: ConversionConfig) -> str:
         return temp_md.read_text(encoding="utf-8")
 
     working_path = config.odt_path
-    enable_crossref = getattr(config.pandoc_options, 'enable_crossref', False)
+    enable_crossref = getattr(config.pandoc_options, "enable_crossref", False)
     if enable_crossref:
         print(messages.get("crossref_enabled"))
         temp_odt = temp_dir / ConverterSettings.TEMP_ODT_FILENAME
@@ -124,7 +139,7 @@ def build_markdown(config: ConversionConfig) -> str:
         shutil.copy2(config.odt_path, temp_odt)
         fig_map = process_odt_crossrefs(temp_odt)
         fig_map_path = temp_odt.with_suffix(ConverterSettings.FIG_MAP_EXT)
-        with open(fig_map_path, 'w', encoding='utf-8') as f:
+        with open(fig_map_path, "w", encoding="utf-8") as f:
             json.dump(fig_map, f)
         working_path = str(temp_odt)
 
@@ -133,18 +148,24 @@ def build_markdown(config: ConversionConfig) -> str:
     odt_path_absolute = Path(working_path).absolute()
     temp_media = temp_dir / ConverterSettings.MEDIA_DIR
     try:
-        return convert_odt_to_markdown(odt_path_absolute, temp_md, temp_media, config.pandoc_options)
+        return convert_odt_to_markdown(
+            odt_path_absolute, temp_md, temp_media, config.pandoc_options
+        )
     except Exception as e:
         print(messages.get("pandoc_error", error=e))
         raise
 
 
-def copy_images_to_sections(sections: List[Section], output_root: Path, temp_media_dir: Path) -> None:
+def copy_images_to_sections(
+    sections: List[Section], output_root: Path, temp_media_dir: Path
+) -> None:
     print(messages.get("copying_images"))
 
     def process(sec: Section, current_path: Path):
         target_images_dir = current_path / ConverterSettings.MEDIA_DIR
-        new_body, _ = extract_and_replace_images(sec.body, temp_media_dir, target_images_dir)
+        new_body, _ = extract_and_replace_images(
+            sec.body, temp_media_dir, target_images_dir
+        )
         sec.body = new_body
         for child in sec.children:
             process(child, current_path / child.slug)
@@ -153,16 +174,21 @@ def copy_images_to_sections(sections: List[Section], output_root: Path, temp_med
         process(sec, output_root / sec.slug)
 
 
-def replace_crossref_links(sections: List[Section], fig_map: dict, output_root: Path) -> None:
+def replace_crossref_links(
+    sections: List[Section], fig_map: dict, output_root: Path
+) -> None:
     if not fig_map:
         print(messages.get("fig_map_empty_warning"))
         return
 
-    media_paths = {num: f"{ConverterSettings.MEDIA_DIR}/{Path(src_path).name}" for num, src_path in fig_map.items()}
+    media_paths = {
+        num: f"{ConverterSettings.MEDIA_DIR}/{Path(src_path).name}"
+        for num, src_path in fig_map.items()
+    }
 
     for num, media_path in media_paths.items():
-        old = f'[@fig:{num}]'
-        new = f'[{num}]({media_path})'
+        old = f"[@fig:{num}]"
+        new = f"[{num}]({media_path})"
         for sec in flatten_sections(sections):
             if old in sec.body:
                 sec.body = sec.body.replace(old, new)

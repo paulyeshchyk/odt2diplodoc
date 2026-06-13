@@ -5,11 +5,12 @@ from pathlib import Path
 from .utils import ensure_dir
 from .config import PandocOptions
 
+
 def convert_odt_to_markdown(
     odt_path: Path,
     temp_md_path: Path,
     temp_media_dir: Path,
-    pandoc_options: PandocOptions
+    pandoc_options: PandocOptions,
 ) -> str:
     ensure_dir(temp_media_dir)
     fmt = pandoc_options.to_pandoc_string()
@@ -19,7 +20,8 @@ def convert_odt_to_markdown(
     target_dir = temp_media_dir.parent
     os.chdir(target_dir)
     try:
-        extra_args = [f"--extract-media=media"]
+        extra_args = ["--extract-media=media"]
+        extra_args.append(f"--wrap=none")
 
         # Lua-фильтры
         if pandoc_options.lua_options and pandoc_options.lua_options.lua_filter_path:
@@ -50,9 +52,9 @@ def convert_odt_to_markdown(
         pypandoc.convert_file(
             source_file=str(source_file),
             to=fmt,
-            format='odt',
+            format="odt",
             extra_args=extra_args,
-            outputfile=temp_md_path.name
+            outputfile=temp_md_path.name,
         )
         result = temp_md_path.read_text(encoding="utf-8")
     finally:
