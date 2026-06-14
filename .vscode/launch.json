@@ -64,7 +64,7 @@
             "name": "Python: MD -> ODT",
             "type": "debugpy",
             "request": "launch",
-            "module": "diplodoc_converter.fromODT.cli",
+            "module": "diplodoc_converter.cli",
             "args": [
                 "build",
                 "-i",
@@ -86,7 +86,7 @@
             "name": "Python: ODT -> MD",
             "type": "debugpy",
             "request": "launch",
-            "module": "diplodoc_converter.fromODT.cli",
+            "module": "diplodoc_converter.cli",
             "args": [
                 "import",
                 "C:\\projects\\private\\gs10_odt\\calibr.odt",

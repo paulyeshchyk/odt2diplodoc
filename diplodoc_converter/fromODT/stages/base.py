@@ -1,6 +1,6 @@
 from abc import ABC
 
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 
 
 class Stage(ABC):

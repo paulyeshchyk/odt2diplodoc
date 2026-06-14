@@ -1,8 +1,7 @@
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
-from .Stage import Stage
-from pathlib import Path
-
 import shutil
+from pathlib import Path
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from .base import Stage
 
 
 class DirOutputWipeStage(Stage):

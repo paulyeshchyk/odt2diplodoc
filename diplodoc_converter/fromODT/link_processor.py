@@ -4,9 +4,9 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
 from diplodoc_converter.fromODT.stages.MDSectionsStage import MDSectionsStage
-from .utils import generate_folder_name
-from .section_parser import Section
+from .model.Section import Section
 
 
 def normalize_title(title: str) -> str:
@@ -29,7 +29,7 @@ def build_slug_and_anchor_maps(
         parent_full: Path = Path(),
     ):
         # Генерируем имя для текущей секции
-        part = generate_folder_name(sec.title)
+        part = Os_File_Utils.generate_folder_name(sec.title)
         if not part:
             part = "bez_nazvaniya"
         # Уникализация в пределах одного родителя (если нужно, можно добавить счётчик)

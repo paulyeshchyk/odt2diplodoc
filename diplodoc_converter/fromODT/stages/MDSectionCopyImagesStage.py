@@ -1,14 +1,13 @@
-from diplodoc_converter.fromODT.ConverterSettings import ConverterSettings
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.image_processor import extract_and_replace_images
-from .Stage import Stage
-from diplodoc_converter.fromODT.section_parser import Section
 from pathlib import Path
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
+from diplodoc_converter.fromODT.image_processor import extract_and_replace_images
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.Section import Section
+from .base import Stage
 
 
 class MDSectionCopyImagesStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
-
         print(ctx.messages.get("copying_images"))
 
         output_root = Path(ctx.config.output_dir).absolute()

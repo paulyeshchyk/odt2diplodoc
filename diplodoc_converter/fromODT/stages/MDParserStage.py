@@ -1,12 +1,15 @@
-from diplodoc_converter.PandocWrapper import PandocWrapper
-from diplodoc_converter.fromODT.builder.PandocContextBuilder import PandocContextBuilder
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.pandoc_utils import PandocWrapper
+from diplodoc_converter.fromODT.model_builder.PandocContextBuilder import (
+    PandocContextBuilder,
+)
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 from diplodoc_converter.fromODT.md import MarkdownFileReader
-from .Stage import Stage
+from .base import Stage
 
 
 class MDParserStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
+        print("Парсинг MD ...")
 
         markdown_reader = MarkdownFileReader()
         ctx.markdown = markdown_reader.read_from_cache(ctx)

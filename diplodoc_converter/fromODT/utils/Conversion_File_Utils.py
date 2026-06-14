@@ -1,12 +1,12 @@
-from diplodoc_converter.fromODT.ConverterSettings import ConverterSettings
-from diplodoc_converter.fromODT.config import ConversionConfig
+from diplodoc_converter.fromODT.model.ConversionConfig import ConversionConfig
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 
 
 import os
 from pathlib import Path
 
 
-class Os_File_Utils:
+class Conversion_File_Utils:
     @staticmethod
     def odt_temp_path(config: ConversionConfig) -> Path:
         temp_dir = Path(config.cache_settings.temp_dir).absolute()
@@ -14,7 +14,7 @@ class Os_File_Utils:
 
     @staticmethod
     def odt_figmap_temp_path(config: ConversionConfig) -> Path:
-        odt_temp_path = Os_File_Utils.odt_temp_path(config)
+        odt_temp_path = Conversion_File_Utils.odt_temp_path(config)
         return odt_temp_path.with_suffix(ConverterSettings.FIG_MAP_EXT)
 
     @staticmethod

@@ -5,7 +5,7 @@ from diplodoc_converter.fromODT.odt.process_odt_delegate import (
     process_odt_with_delegate,
 )
 
-from ...figure_constants import FIGURE_PREFIX, FIGURE_MARKER
+from ...model.figure_constants import FIGURE_PREFIX, FIGURE_MARKER
 
 NAMESPACES = {
     "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",

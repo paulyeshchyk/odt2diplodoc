@@ -4,7 +4,8 @@ import re
 import shutil
 from pathlib import Path
 from typing import Tuple
-from .utils import ensure_dir
+
+from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
 
 
 def extract_and_replace_images(
@@ -23,7 +24,7 @@ def extract_and_replace_images(
         r"!\[(.*?)\]\((.*?\.(?:png|jpg|jpeg|gif|svg|bmp))\)", re.IGNORECASE | re.DOTALL
     )
 
-    ensure_dir(target_images_dir)
+    Os_File_Utils.ensure_dir(target_images_dir)
     count = 0
 
     def replace_path(match):

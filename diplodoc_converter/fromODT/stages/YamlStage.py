@@ -1,16 +1,18 @@
-from diplodoc_converter.fromODT import config
-from diplodoc_converter.fromODT.ConverterSettings import ConverterSettings
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.diplodoc_writer import shift_headings
-from .Stage import Stage
-from diplodoc_converter.fromODT.section_parser import Section
-from diplodoc_converter.fromODT.utils import ensure_dir
+import re
+
+from diplodoc_converter.fromODT.model import ParserSettings
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
+from .base import Stage
+from diplodoc_converter.fromODT.model.Section import Section
 import yaml
 from pathlib import Path
 
 
 class YamlStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
+        print("Обработка yaml ...")
         self.build_section_tree(ctx)
 
     def build_section_tree(
@@ -72,16 +74,18 @@ class YamlStage(Stage):
         if sec.full_slug is None:
             raise RuntimeError(f"full_slug не установлен для секции '{sec.title}'")
         folder_path = output_root / sec.full_slug
-        ensure_dir(folder_path)
+        Os_File_Utils.ensure_dir(folder_path)
 
         section_type = "Section" if sec.level == 1 else "Chapter"
         # Вычисляем сдвиг: для заголовка секции уровня L, хотим сделать его уровня 1
 
         section_type = "Section" if sec.level == 1 else "Chapter"
 
-        if config.ParserSettings.normalize_headings:
+        if ParserSettings.ParserSettings.normalize_headings:
             shift = 1 - sec.level  # правильный сдвиг
-            shifted_body = shift_headings(sec.body, shift, min_level=2)
+            shifted_body = SectionHeaderShifter.shift_headings(
+                sec.body, shift, min_level=2
+            )
         else:
             shifted_body = sec.body
 
@@ -111,3 +115,19 @@ class YamlStage(Stage):
         toc_yaml = {"title": sec.title, "href": "index.yaml", "items": toc_items}
         with open(folder_path / "toc.yaml", "w", encoding="utf-8") as f:
             yaml.dump(toc_yaml, f, allow_unicode=True, sort_keys=False, indent=2)
+
+
+class SectionHeaderShifter:
+    @staticmethod
+    def shift_headings(content: str, shift: int, min_level: int = 1) -> str:
+        """Сдвигает уровни Markdown-заголовков на shift, не опуская ниже min_level."""
+
+        def repl(m):
+            hashes = m.group(1)
+            new_level = len(hashes) + shift
+            if new_level < min_level:
+                new_level = min_level
+            return "#" * new_level + m.group(2)
+
+        pattern = r"^(#{1,6})(\s+.*)$"
+        return re.sub(pattern, repl, content, flags=re.MULTILINE)

@@ -3,7 +3,6 @@ class ConverterMessages:
 
     def __init__(self, lang="ru"):
         self.lang = lang
-        # Здесь можно расширить под другие языки
         self.msgs = {
             "ru": {
                 "parsing": "Разбор структуры документа...",

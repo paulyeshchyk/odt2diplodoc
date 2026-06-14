@@ -1,14 +1,13 @@
-from diplodoc_converter.fromODT.ConverterMessages import ConverterMessages
-from diplodoc_converter.fromODT.cli import _parse_lua_filters
-from diplodoc_converter.fromODT.config import (
-    CacheSettings,
-    ConversionConfig,
-    LuaOptions,
-    OdtCrossReferences,
+from diplodoc_converter.fromODT.model.CacheSettings import CacheSettings
+from diplodoc_converter.fromODT.model.ConversionConfig import ConversionConfig
+from diplodoc_converter.fromODT.model.ConverterMessages import ConverterMessages
+from diplodoc_converter.fromODT.pandoc_utils.LuaOptions import LuaOptions
+from diplodoc_converter.fromODT.model.OdtCrossReferences import OdtCrossReferences
+from diplodoc_converter.fromODT.model.ParserSettings import ParserSettings
+from diplodoc_converter.fromODT.pandoc_utils.PandocOptions import (
     PandocOptions,
-    ParserSettings,
 )
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 
 
 class ConfigBuilder:
@@ -61,3 +60,10 @@ class ConfigBuilder:
         )
 
         return config
+
+
+def _parse_lua_filters(value: str | None) -> list[str] | None:
+    if not value:
+        return None
+    filters = [f.strip() for f in value.split(",") if f.strip()]
+    return filters if filters else None

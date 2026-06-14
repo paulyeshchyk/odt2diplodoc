@@ -1,12 +1,14 @@
-from diplodoc_converter.fromODT.config import PandocOptions
-from diplodoc_converter.fromODT.pandoc_wrapper import (
-    PandocContext,
-    PyPandocContextBuilder,
-)
-from diplodoc_converter.fromODT.utils import ensure_dir
-import pypandoc
 import os
 from pathlib import Path
+import pypandoc
+
+# from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
+
+from .PandocContext import PandocContext
+from .PandocOptions import PandocOptions
+from diplodoc_converter.fromODT.model_builder.PyPandocContextBuilder import (
+    PyPandocContextBuilder,
+)
 
 
 class PandocWrapper:
@@ -15,7 +17,7 @@ class PandocWrapper:
         pandoc_ctx: PandocContext,
         pandoc_options: PandocOptions,
     ) -> str:
-        ensure_dir(pandoc_ctx.temp_media_dir)
+        # Os_File_Utils.ensure_dir(pandoc_ctx.temp_media_dir)
 
         original_cwd = Path.cwd()
         pyPandocContextBuilder = PyPandocContextBuilder()

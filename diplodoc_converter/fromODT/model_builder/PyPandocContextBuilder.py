@@ -1,23 +1,9 @@
 # diplodoc_converter/pandoc_wrapper.py
-from dataclasses import dataclass
 from pathlib import Path
-from .config import PandocOptions
 
-
-@dataclass
-class PandocContext:
-    odt_path: Path
-    temp_md_path: Path
-    temp_media_dir: Path
-
-
-@dataclass
-class PyPandocContext:
-    source_file: str
-    pandoc_fmt: str
-    output_fmt: str
-    extra_args: list[str]
-    outputfile: str
+from diplodoc_converter.fromODT.pandoc_utils.PandocContext import PandocContext
+from diplodoc_converter.fromODT.model.PyPandocContext import PyPandocContext
+from ..pandoc_utils.PandocOptions import PandocOptions
 
 
 class PyPandocContextBuilder:

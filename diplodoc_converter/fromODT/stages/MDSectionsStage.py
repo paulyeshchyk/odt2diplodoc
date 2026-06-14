@@ -1,7 +1,7 @@
-from diplodoc_converter.fromODT.config import ParserSettings
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
-from .Stage import Stage
-from diplodoc_converter.fromODT.section_parser import Section
+from diplodoc_converter.fromODT.model.ParserSettings import ParserSettings
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from .base import Stage
+from diplodoc_converter.fromODT.model.Section import Section
 
 
 import re
@@ -10,6 +10,7 @@ from typing import List, Optional
 
 class MDSectionsStage(Stage):
     def process(self, ctx: ConversionContext) -> None:
+        print("Обработка секций ...")
         ctx.sections = self.parse_sections(ctx.markdown, ctx.config.parser_settings)
 
     def parse_sections(

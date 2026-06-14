@@ -301,9 +301,7 @@ class CrossReferenceStrategy:
 
         content_str = re.sub(pattern_link, ref_replacer, content_str, flags=re.DOTALL)
 
-        print(
-            f"  [CrossReferenceStrategy]: Закончен. Красиво обернуто ссылок: {count} шт."
-        )
+        print(f"  [CrossReferenceStrategy]: Закончен. Обернуто ссылок: {count} шт.")
         return content_str
 
 

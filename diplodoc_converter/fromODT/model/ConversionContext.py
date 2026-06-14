@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from diplodoc_converter.fromODT.ConverterMessages import ConverterMessages
-from diplodoc_converter.fromODT.config import ConversionConfig
-from diplodoc_converter.fromODT.section_parser import Section
+from diplodoc_converter.fromODT.model import ConverterMessages
+from diplodoc_converter.fromODT.model.ConversionConfig import ConversionConfig
+from diplodoc_converter.fromODT.model.Section import Section
 
 
 @dataclass

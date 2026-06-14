@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from diplodoc_converter.intoODT.odt_builder import OdtBuilder
-from diplodoc_converter.intoODT.parser import TocParser
+from diplodoc_converter.intoODT.toc_parser import TocParser
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 
 # try:
@@ -48,42 +48,3 @@ def run() -> None:
     except Exception as e:
         print(f"Ошибка: {e}")
         sys.exit(1)
-
-
-def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Сборка ODT из MD")
-    parser.add_argument(
-        "-i", "--input-dir", required=True, help="Корневая папка документации"
-    )
-    parser.add_argument("-o", "--output", required=True, help="Выходной ODT-файл")
-    parser.add_argument(
-        "--reference", default=None, help="ODT-файл с пользовательскими стилями"
-    )
-    parser.add_argument(
-        "--width-threshold", type=int, default=700, help="Ширина для масштабирования"
-    )
-    parser.add_argument(
-        "--max-heading", type=int, default=6, help="Макс. уровень заголовка"
-    )
-    parser.add_argument(
-        "--caption-position",
-        choices=["below", "inside"],
-        default="inside",
-        help="Расположение подписи: below – под картинкой, inside – внутри alt",
-    )
-    args = parser.parse_args()
-    MdToOdtConfig.update(
-        DEFAULT_INPUT_DIR=args.input_dir,
-        DEFAULT_OUTPUT_FILE=args.output,
-        REFERENCE_ODT=args.reference,
-        WIDTH_THRESHOLD=args.width_threshold,
-        MAX_HEADING_LEVEL=args.max_heading,
-        CAPTION_POSITION=args.caption_position,
-    )
-    run()
-
-
-if __name__ == "__main__":
-    main()

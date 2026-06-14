@@ -1,7 +1,7 @@
 # strategies/md_strategy/fix_figure_references.py
 import re
 from .MDContentStrategy import MDContentStrategy
-from ....figure_constants import (
+from ....model.figure_constants import (
     PLACEHOLDER_PATTERN,
     FIGURE_MARKER,
     SOURCE_IMAGE_FOLDER,

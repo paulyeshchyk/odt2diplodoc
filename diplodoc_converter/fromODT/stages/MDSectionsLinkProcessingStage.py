@@ -1,12 +1,12 @@
-from diplodoc_converter.fromODT.context.ConversionContext import ConversionContext
+from pathlib import Path
 from diplodoc_converter.fromODT.link_processor import (
     build_slug_and_anchor_maps,
     replace_internal_links,
 )
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 from diplodoc_converter.fromODT.stages.MDSectionsStage import MDSectionsStage
-from pathlib import Path
 
-from .Stage import Stage
+from .base import Stage
 
 
 class MDSectionsLinkProcessingStage(Stage):

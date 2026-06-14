@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class ConverterSettings:
     """Константы, используемые в конвертере."""
 
