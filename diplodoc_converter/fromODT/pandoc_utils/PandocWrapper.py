@@ -1,9 +1,6 @@
 import os
 from pathlib import Path
 import pypandoc
-
-# from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
-
 from .PandocContext import PandocContext
 from .PandocOptions import PandocOptions
 from diplodoc_converter.fromODT.model_builder.PyPandocContextBuilder import (
