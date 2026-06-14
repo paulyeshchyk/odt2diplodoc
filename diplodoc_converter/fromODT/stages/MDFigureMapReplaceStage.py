@@ -1,7 +1,7 @@
 from pathlib import Path
 from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.stages.MDSectionsStage import MDSectionsStage
+from diplodoc_converter.fromODT.stages.MDSectionsStage import SectionFlatten
 from .base import Stage
 
 
@@ -24,6 +24,6 @@ class MDFigureMapReplaceStage(Stage):
         for num, media_path in media_paths.items():
             old = f"[@fig:{num}]"
             new = f"[{num}]({media_path})"
-            for sec in MDSectionsStage.flatten_sections(ctx.sections):
+            for sec in SectionFlatten.flatten_sections(ctx.sections):
                 if old in sec.body:
                     sec.body = sec.body.replace(old, new)

@@ -19,7 +19,7 @@ from diplodoc_converter.fromODT.stages import (
 )
 
 
-class cli_import:
+class cli_odt2md:
     @staticmethod
     def run_import(args):
         messages = ConverterMessages(lang="ru")

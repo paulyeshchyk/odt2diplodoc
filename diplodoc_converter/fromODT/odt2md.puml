@@ -1,0 +1,173 @@
+@startuml
+title Диаграмма последовательности конвертации ODT в MD-документацию
+
+actor User as User
+participant "cli_odt2md.run_import" as CLI
+participant "Pipeline" as Pipeline
+participant "DirOutputWipeStage" as WipeOut
+participant "ODTCloneStage" as Clone
+participant "ODTFigureMapBuildStage" as BuildFigMap
+participant "OdtProcessor_CrossRef" as CrossRef
+participant "ODTStyleNoteReplaceStage" as NotePrep
+participant "OdtPreprocessor_StyleNote" as NoteProc
+participant "ODTPagebrakeReplaceStage" as PageBreakPrep
+participant "OdtPreprocessor_PageBreak" as PageBreakProc
+participant "MDParserStage" as MDParser
+participant "MarkdownFileReader" as MDFile
+participant "PandocWrapper" as Pandoc
+participant "PyPandocContextBuilder" as PyBuilder
+participant "GlobalStrategiesStage" as GlobalStrat
+participant "MDSectionsStage" as Sections
+participant "HeaderParser" as HeadParse
+participant "SectionIndexAssigner" as IndexAssign
+participant "MDSectionsLinkProcessingStage" as LinkProc
+participant "build_slug_and_anchor_maps" as SlugMap
+participant "replace_internal_links" as ReplaceLinks
+participant "MDSectionCopyImagesStage" as CopyImages
+participant "extract_and_replace_images" as ImgProc
+participant "MDFigureMapReplaceStage" as FigMapReplace
+participant "MDSectionStrategiesStage" as SectStrat
+participant "YamlStage" as YamlGen
+participant "DirCacheWipeStage" as WipeCache
+database "Файловая система" as FS
+
+User -> CLI: run_import(args)
+activate CLI
+
+CLI -> CLI: ConfigBuilder.build_conversion_context()
+create Pipeline
+CLI -> Pipeline: new Pipeline(stages)
+CLI -> Pipeline: run(ctx)
+activate Pipeline
+
+Pipeline -> WipeOut: process(ctx)
+activate WipeOut
+WipeOut -> FS: удаление output_dir (если существует)
+deactivate WipeOut
+
+Pipeline -> Clone: process(ctx)
+activate Clone
+Clone -> Conversion_File_Utils: odt_temp_path(ctx.config)
+Conversion_File_Utils --> Clone: temp_odt_path
+Clone -> FS: копирование исходного ODT во временную папку
+deactivate Clone
+
+Pipeline -> BuildFigMap: process(ctx)
+activate BuildFigMap
+BuildFigMap -> Conversion_File_Utils: odt_temp_path(ctx.config)
+BuildFigMap -> CrossRef: process_odt_crossrefs(temp_odt)
+activate CrossRef
+CrossRef -> process_odt_with_delegate: вызов делегата
+process_odt_with_delegate -> CrossRef: _process(tmp_path)
+CrossRef -> _process: парсинг content.xml
+note right of CrossRef: Поиск <draw:frame>,\n<text:sequence>,\n<text:sequence-ref>\nДобавление маркеров {#fig:N}
+CrossRef --> BuildFigMap: fig_map
+deactivate CrossRef
+BuildFigMap -> ctx: сохраняет fig_map
+deactivate BuildFigMap
+
+Pipeline -> NotePrep: process(ctx)
+activate NotePrep
+NotePrep -> Conversion_File_Utils: odt_temp_path(ctx.config)
+NotePrep -> NoteProc: process(odt_temp_path)
+activate NoteProc
+NoteProc -> process_odt_with_delegate: _process_notes
+note right of NoteProc: Замена стилей NoteAlert,\nNoteInfo,NoteTip на\nмаркеры @@@NOTE_...@@@
+deactivate NoteProc
+deactivate NotePrep
+
+Pipeline -> PageBreakPrep: process(ctx)
+activate PageBreakPrep
+PageBreakPrep -> Conversion_File_Utils: odt_temp_path(ctx.config)
+PageBreakPrep -> PageBreakProc: process(odt_temp_path)
+activate PageBreakProc
+PageBreakProc -> process_odt_with_delegate: _process_page_breaks
+note right of PageBreakProc: Замена пустых абзацев со стилем P*,\nатрибутов break-before="page"\nна маркеры @@@PAGE_BREAK@@@
+deactivate PageBreakProc
+deactivate PageBreakPrep
+
+Pipeline -> MDParser: process(ctx)
+activate MDParser
+MDParser -> MDFile: read_from_cache(ctx)
+alt Кэш существует
+    MDFile --> MDParser: markdown из кэша
+else
+    MDParser -> Pandoc: convert_odt_to_markdown(pandoc_ctx, pandoc_options)
+    activate Pandoc
+    Pandoc -> PyBuilder: build(...)
+    PyBuilder -> Pandoc: PyPandocContext
+    Pandoc -> pypandoc: convert_file(...)
+    pypandoc --> Pandoc: результат конвертации
+    Pandoc --> MDParser: markdown
+    deactivate Pandoc
+end
+MDParser -> ctx: сохраняет markdown
+deactivate MDParser
+
+Pipeline -> GlobalStrat: process(ctx)
+activate GlobalStrat
+loop для каждой глобальной стратегии
+    GlobalStrat -> strategy: transform(ctx.markdown)
+end
+deactivate GlobalStrat
+
+Pipeline -> Sections: process(ctx)
+activate Sections
+Sections -> Sections: parse_sections(ctx.markdown, parser_settings)
+note right of Sections: Разбиение Markdown на секции\nпо заголовкам
+Sections -> HeadParse: parse_heading(cleaned)
+HeadParse --> Sections: (section_type, number, pureTitle)
+Sections -> Sections: создание объектов Section
+Sections -> SectionIndexAssigner: assign_section_indices(sections, ...)
+SectionIndexAssigner --> Sections: присвоение sectionIndex
+Sections --> ctx: ctx.sections
+deactivate Sections
+
+Pipeline -> LinkProc: process(ctx)
+activate LinkProc
+LinkProc -> SlugMap: build_slug_and_anchor_maps(sections, output_dir)
+SlugMap --> LinkProc: slug_map, anchor_map
+LinkProc -> ReplaceLinks: replace_internal_links(sec.body, ...)
+ReplaceLinks --> LinkProc: изменённый body
+LinkProc -> SectionFlatten: flatten_sections(sections)
+deactivate LinkProc
+
+Pipeline -> CopyImages: process(ctx)
+activate CopyImages
+CopyImages -> extract_and_replace_images
+activate ImgProc
+ImgProc --> CopyImages: новый body, количество
+deactivate ImgProc
+CopyImages -> ctx: обновляет sec.body
+deactivate CopyImages
+
+Pipeline -> FigMapReplace: process(ctx)
+activate FigMapReplace
+FigMapReplace -> ctx: замена [@fig:N] на [N](media/путь)
+FigMapReplace -> SectionFlatten: flatten_sections(sections)
+deactivate FigMapReplace
+
+Pipeline -> SectStrat: process(ctx)
+activate SectStrat
+loop для каждой секционной стратегии
+    SectStrat -> strategy: transform_section(sec)
+end
+deactivate SectStrat
+
+Pipeline -> YamlGen: process(ctx)
+activate YamlGen
+YamlGen -> FS: создание index.md, index.yaml, toc.yaml для каждой секции и корня
+note right of YamlGen: Использует SectionHeaderShifter\nдля сдвига уровней заголовков
+deactivate YamlGen
+
+Pipeline -> WipeCache: process(ctx)
+activate WipeCache
+WipeCache -> FS: удаление временной папки (если keep_cache=False)
+deactivate WipeCache
+
+Pipeline --> CLI: завершение
+deactivate Pipeline
+CLI --> User: готово
+deactivate CLI
+
+@enduml

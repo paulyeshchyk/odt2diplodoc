@@ -1,12 +1,13 @@
 from diplodoc_converter.intoODT.models import DocNode
 from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
 from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
-from diplodoc_converter.intoODT.utils import transliterate
 
 
 import re
 from pathlib import Path
 from typing import Dict, List
+
+from diplodoc_converter.intoODT.Transliterator import Transliterator
 
 
 class AnchorMappingStep(OdtPipelineStep):
@@ -29,6 +30,6 @@ class AnchorMappingStep(OdtPipelineStep):
     def _generate_anchor(rel_path: Path) -> str:
         parts = rel_path.with_suffix("").parts
         anchor = "_".join(parts)
-        anchor = transliterate(anchor)
+        anchor = Transliterator.transliterate(anchor)
         anchor = re.sub(r"[^a-zA-Z0-9_.-]", "_", anchor)
         return f"doc_{anchor}"

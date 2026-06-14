@@ -4,8 +4,7 @@ from pathlib import Path
 import sys
 
 from diplodoc_converter.intoODT.config import MdToOdtConfig
-from diplodoc_converter.intoODT.odt_builder import OdtBuilderPipeline
-from diplodoc_converter.intoODT.toc_parser import TocParser
+from diplodoc_converter.intoODT.postProcessing.odt_builder import OdtBuilderPipeline
 
 from diplodoc_converter.intoODT.stages import (
     AnchorMappingStep,
@@ -17,7 +16,7 @@ from diplodoc_converter.intoODT.stages import (
 )
 
 
-class cli_export:
+class cli_md2odt:
     @staticmethod
     def run_export(args):
         MdToOdtConfig.update(

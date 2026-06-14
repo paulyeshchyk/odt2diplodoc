@@ -1,0 +1,11 @@
+[tool.mypy]
+exclude = [
+    '^vscode-extension/',
+]
+disallow_untyped_defs = false       # Разрешить функции без аннотаций
+check_untyped_defs = false          # НЕ заглядывать внутрь функций без аннотаций
+disallow_incomplete_defs = false    # Разрешить частичные аннотации
+
+[[tool.mypy.overrides]]
+module = "PIL.*"
+ignore_missing_imports = true

@@ -10,3 +10,4 @@ class MarkdownFileReader:
         if cache.reuse_cache and temp_md.exists():
             print(ctx.messages.get("using_cache", path=temp_md))
             return temp_md.read_text(encoding="utf-8")
+        return None

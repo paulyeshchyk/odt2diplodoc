@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import Callable, Optional
+
+from diplodoc_converter.fromODT.model.Section import Section
 
 
 @dataclass
@@ -13,3 +16,6 @@ class ParserSettings:
 
     max_heading_level_for_single_page: int = 6
     normalize_headings: bool = True
+    inherit_index_from_nonindexed: bool = False
+    indexing_callback: Optional[Callable[[Section], bool]] = None
+    enable_section_indexing: bool = False  # Оставим индексы теми, что были в оригинале

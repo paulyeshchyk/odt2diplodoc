@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import no_type_check
 from lxml import etree
 
 from diplodoc_converter.fromODT.odt.process_odt_delegate import (
@@ -8,6 +9,7 @@ from .OdtPreprocessor import OdtPreprocessor
 
 
 class OdtPreprocessor_PageBreak(OdtPreprocessor):
+    @no_type_check
     def process(self, odt_path: Path) -> None:
         """Заменяет разрывы страниц в ODT на маркеры."""
         process_odt_with_delegate(odt_path, self._process_page_breaks)
@@ -17,6 +19,7 @@ class OdtPreprocessor_PageBreak(OdtPreprocessor):
         "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
     }
 
+    @no_type_check
     def _process_page_breaks(self, tmp_path: Path) -> dict | None:
         content_xml = tmp_path / "content.xml"
         tree = etree.parse(str(content_xml))

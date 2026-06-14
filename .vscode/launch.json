@@ -18,6 +18,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/fromODT/diplodoc_converter/cli.py",
             "console": "integratedTerminal",
+            "preLaunchTask": "Python: Проверка проекта (Ruff + Mypy)", 
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
@@ -40,6 +41,7 @@
             "name": "Python: Запуск конвертера (с кэшем)",
             "type": "debugpy",
             "request": "launch",
+            "preLaunchTask": "Python: Проверка проекта (Ruff + Mypy)", 
             "program": "${workspaceFolder}/fromODT/diplodoc_converter/cli.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
@@ -64,6 +66,7 @@
             "name": "Python: MD -> ODT",
             "type": "debugpy",
             "request": "launch",
+            "preLaunchTask": "Python: Проверка проекта (Ruff + Mypy)", 
             "module": "diplodoc_converter.cli",
             "args": [
                 "build",
@@ -86,6 +89,7 @@
             "name": "Python: ODT -> MD",
             "type": "debugpy",
             "request": "launch",
+            "preLaunchTask": "Python: Проверка проекта (Ruff + Mypy)", 
             "module": "diplodoc_converter.cli",
             "args": [
                 "import",

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import no_type_check
 from lxml import etree
 
 from diplodoc_converter.fromODT.odt.process_odt_delegate import (
@@ -24,6 +25,7 @@ class OdtPreprocessor_StyleNote(OdtPreprocessor):
         "NoteTip": "TIP",
     }
 
+    @no_type_check
     def _process_notes(self, tmp_path: Path) -> dict | None:
         content_xml = tmp_path / "content.xml"
         tree = etree.parse(str(content_xml))

@@ -1,0 +1,111 @@
+@startuml
+title Диаграмма последовательности сборки ODT из MD-документации
+
+actor User as User
+participant "cli_md2odt.run_export" as CLI
+participant "OdtBuilderPipeline.build" as Pipeline
+participant "TocParsingStep" as Step1
+participant "AnchorMappingStep" as Step2
+participant "ImageCopyingStep" as Step3
+participant "MarkdownCompilationStep" as Step4
+participant "MarkdownProcessor" as MDProc
+participant "PandocConversionStep" as Step5
+participant "OdtPostProcessingStep" as Step6
+participant "OdtPostProcessor" as PostProc
+participant "FigureCaptionStrategy" as FigCap
+participant "CrossReferenceStrategy" as CrossRef
+database "Файловая система" as FS
+
+User -> CLI: run_export(args)
+activate CLI
+CLI -> CLI: MdToOdtConfig.update(...)
+CLI -> Pipeline: build(root_dir, output_file)
+activate Pipeline
+
+Pipeline -> Pipeline: OdtBuildContext(...)
+Pipeline -> Pipeline: tempfile.TemporaryDirectory()
+Pipeline -> Step1: execute(context)
+activate Step1
+Step1 -> FS: root_dir/toc.yaml
+FS --> Step1: YAML
+Step1 -> Step1: TocParser.load_toc()
+Step1 -> Step1: TocParser.collect_md_files()
+Step1 --> Pipeline: context.nodes заполнен
+deactivate Step1
+
+Pipeline -> Step2: execute(context)
+activate Step2
+Step2 -> Step2: AnchorMappingStep._build_anchor_map(context.nodes)
+Step2 --> Pipeline: context.anchor_map
+deactivate Step2
+
+Pipeline -> Step3: execute(context)
+activate Step3
+Step3 -> Step3: ImageCopyingStep._copy_images_for_nodes()
+loop по всем узлам
+    Step3 -> FS: копирование изображений в context.temp_dir
+end
+deactivate Step3
+
+Pipeline -> Step4: execute(context)
+activate Step4
+Step4 -> Step4: MarkdownCompilationStep._write_node()
+loop по всем узлам
+    Step4 -> MDProc: new MarkdownProcessor(...)
+    activate MDProc
+    MDProc -> MDProc: process(content, node)
+    loop по всем процессорам
+        MDProc -> MDProc: FrontmatterRemover.process
+        MDProc -> MDProc: HeadingShifter.process
+        MDProc -> MDProc: BulletListNormalizer.process
+        MDProc -> MDProc: EmptyHeadingRemover.process
+        MDProc -> MDProc: NoteBlockReplacer.process
+        MDProc -> MDProc: ImageProcessor.process
+        MDProc -> MDProc: InternalLinkConverter.process
+    end
+    MDProc --> Step4: processed_content
+    deactivate MDProc
+    Step4 -> FS: запись в context.combined_md_path
+end
+deactivate Step4
+
+Pipeline -> Step5: execute(context)
+activate Step5
+Step5 -> Step5: subprocess.run(pandoc ...)
+Step5 -> FS: конвертация в context.output_path
+deactivate Step5
+
+Pipeline -> Step6: execute(context)
+activate Step6
+Step6 -> PostProc: new OdtPostProcessor(output_path)
+activate PostProc
+PostProc -> PostProc: run(strategies)
+note right of PostProc: strategies = [FigureCaptionStrategy(), CrossReferenceStrategy()]
+
+PostProc -> FigCap: process(content.xml)
+activate FigCap
+FigCap -> FigCap: extract_all_links() -> CrossReferenceManager
+FigCap -> FigCap: find_best_matching_pandoc_id()
+FigCap -> FigCap: заменяет маркеры %%%CAPTION_START%%% на нативные рамки
+FigCap --> PostProc: изменённый content.xml
+deactivate FigCap
+
+PostProc -> CrossRef: process(content.xml)
+activate CrossRef
+CrossRef -> CrossRef: получение figure_map из CrossReferenceManager
+loop по каждой найденной ссылке
+    CrossRef -> CrossRef: замена <text:a> на <text:sequence-ref>
+end
+CrossRef --> PostProc: изменённый content.xml
+deactivate CrossRef
+
+PostProc -> FS: запись обновлённого content.xml в ODT
+deactivate PostProc
+deactivate Step6
+
+Pipeline -> Pipeline: clean temp_dir
+Pipeline --> CLI: результат
+deactivate Pipeline
+CLI --> User: готово
+deactivate CLI
+@enduml

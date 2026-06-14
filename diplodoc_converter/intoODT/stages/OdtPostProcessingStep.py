@@ -1,7 +1,11 @@
+from diplodoc_converter.intoODT.postProcessing.ODT.CrossReferenceStrategy import (
+    CrossReferenceStrategy,
+)
+from diplodoc_converter.intoODT.postProcessing.ODT.FigureCaptionStrategy import (
+    FigureCaptionStrategy,
+)
 from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
 from diplodoc_converter.intoODT.odt_postprocessor import (
-    CrossReferenceStrategy,
-    FigureCaptionStrategy,
     OdtPostProcessor,
 )
 from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep

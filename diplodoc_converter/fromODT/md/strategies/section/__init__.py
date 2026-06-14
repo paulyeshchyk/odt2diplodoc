@@ -1,5 +1,5 @@
 from .MDSectionStrategyTwoColumnTableNoteReplacer import (
-    MDSectionStrategyTwoColumnTableNoteReplacer,
+    # MDSectionStrategyTwoColumnTableNoteReplacer,
     HorizontalRuleNoteStrategy,
 )
 from .MDSectionStrategyImagesInFiguresWrap import MDSectionStrategyImagesInFiguresWrap
@@ -10,6 +10,6 @@ from .MDSectionStrategyPandocAttributesRemove import (
 section_strategies = [
     MDSectionStrategyPandocAttributesRemove(),
     HorizontalRuleNoteStrategy(),
-    MDSectionStrategyTwoColumnTableNoteReplacer(),
+    # MDSectionStrategyTwoColumnTableNoteReplacer(),
     MDSectionStrategyImagesInFiguresWrap(),
 ]

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import no_type_check
 from lxml import etree
 
 from diplodoc_converter.fromODT.odt.process_odt_delegate import (
@@ -15,6 +16,7 @@ NAMESPACES = {
 
 
 class OdtProcessor_CrossRef:
+    @no_type_check
     def process_odt_crossrefs(self, odt_path: Path) -> dict:
         def _process(tmp_path: Path) -> dict:
             content_xml = tmp_path / "content.xml"
@@ -29,7 +31,7 @@ class OdtProcessor_CrossRef:
                 seq = frame.find(".//text:sequence", namespaces=NAMESPACES)
                 if seq is None:
                     continue
-                num = seq.text.strip()
+                num = seq.text.strip()  # type: ignore[arg-type]
                 ref_name = seq.get(f"{{{NAMESPACES['text']}}}ref-name")
                 if ref_name:
                     ref_map[ref_name] = num
@@ -63,6 +65,8 @@ class OdtProcessor_CrossRef:
                     parent.replace(seq_ref, new_span)
 
             tree.write(str(content_xml), encoding="utf-8", xml_declaration=True)
+            assert len(fig_map.keys()) != 0, "Не найдены кросс-ссылки"
+            print(f"Обработано кросс-ссылок: {len(fig_map.keys())}")
             return fig_map
 
         return process_odt_with_delegate(odt_path, _process)

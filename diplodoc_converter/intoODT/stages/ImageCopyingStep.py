@@ -13,7 +13,7 @@ class ImageCopyingStep(OdtPipelineStep):
     """Шаг 2: Рекурсивный сбор и копирование изображений во временную директорию."""
 
     def execute(self, context: OdtBuildContext) -> None:
-        copied_folders = set()
+        copied_folders: set[Path] = set()
         self._copy_images_for_nodes(
             context.nodes, context.temp_dir, context.root_dir, copied_folders
         )

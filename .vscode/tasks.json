@@ -2,6 +2,47 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Python: Проверка проекта (Ruff + Mypy)",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Run Ruff Linter",
+                "Run Mypy Typechecker"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Ruff Linter",
+            "type": "shell",
+            // Использование npx/pipx или прямой вызов, если они установлены глобально
+            "command": "ruff check .", 
+            "problemMatcher": {
+                "owner": "ruff",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^([^:]+):(\\d+):(\\d+):\\s+([^\\s]+)\\s+(.*)$",
+                    "file": 1, "line": 2, "column": 3, "code": 4, "message": 5
+                }
+            }
+        },
+        {
+            "label": "Run Mypy Typechecker",
+            "type": "shell",
+            "command": "python -m mypy .",
+            "problemMatcher": {
+                "owner": "mypy",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^([^:]+):(\\d+):\\s+(error|warning|note):\\s+(.*)$",
+                    "file": 1, "line": 2, "severity": 3, "message": 4
+                }
+            }
+        },
+        {
             "label": "Build Diplodoc Extension (Patch)",
             "type": "shell",
             "command": "node",
