@@ -1,6 +1,8 @@
 import shutil
 from pathlib import Path
+
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+
 from .base import Stage
 
 

@@ -121,9 +121,10 @@
 
 1. Установите Python 3.11+, Pandoc, PyYAML.  
 2. Склонируйте репозиторий, создайте виртуальное окружение.  
-3. Положите ваш `manual.odt` в корневую папку.  
-4. Запустите `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.  
-5. Результат готов для сборки через `diplodoc build`.
+3. Запусти `pip install -r requirements.txt`
+4. Положите ваш `manual.odt` в корневую папку.  
+5. Запустите `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.  
+6. Результат готов для сборки через `diplodoc build`.
 
 Подробнее о настройках — в комментариях к `cli.py` и в `config.py`.
 

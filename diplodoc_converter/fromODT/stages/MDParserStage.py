@@ -1,9 +1,10 @@
-from diplodoc_converter.fromODT.pandoc_utils import PandocWrapper
+from diplodoc_converter.fromODT.md import MarkdownFileReader
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 from diplodoc_converter.fromODT.model_builder.PandocContextBuilder import (
     PandocContextBuilder,
 )
-from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.md import MarkdownFileReader
+from diplodoc_converter.fromODT.pandoc_utils import PandocWrapper
+
 from .base import Stage
 
 

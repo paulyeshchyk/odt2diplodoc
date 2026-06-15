@@ -1,8 +1,7 @@
-import yaml
-
-
 import re
 from pathlib import Path
+
+import yaml
 
 
 def extract_title_from_md(file_path: Path) -> str | None:

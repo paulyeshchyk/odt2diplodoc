@@ -1,12 +1,11 @@
+from dataclasses import dataclass
+
 from diplodoc_converter.fromODT.model.CacheSettings import CacheSettings
 from diplodoc_converter.fromODT.model.OdtCrossReferences import OdtCrossReferences
 from diplodoc_converter.fromODT.model.ParserSettings import ParserSettings
 from diplodoc_converter.fromODT.pandoc_utils.PandocOptions import (
     PandocOptions,
 )
-
-
-from dataclasses import dataclass
 
 
 @dataclass

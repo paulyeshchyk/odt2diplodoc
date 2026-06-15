@@ -1,8 +1,9 @@
 import re
-from diplodoc_converter.fromODT.model.Section import Section
+
 from diplodoc_converter.fromODT.md.strategies.section.MDSectionStrategy import (
     MDSectionStrategy,
 )
+from diplodoc_converter.fromODT.model.Section import Section
 
 
 class MDSectionStrategyImagesInFiguresWrap(MDSectionStrategy):

@@ -1,17 +1,16 @@
-from .MDContentStrategyPageBreakReplacer import MDContentStrategyPageBreakReplacer
+from .MDContentStrategyAnchorLinksRemover import MDContentStrategyAnchorLinksRemover
+from .MDContentStrategyEmptyAnchorsRemover import MDContentStrategyEmptyAnchorsRemover
 from .MDContentStrategyFigureReferencesReplacer import (
     MDContentStrategyFigureReferencesReplacer,
 )
-from .MDContentStrategyAnchorLinksRemover import MDContentStrategyAnchorLinksRemover
 from .MDContentStrategyFigureReferencesReplacer1 import (
     MDContentStrategyFigureReferencesReplacer1,
 )
+from .MDContentStrategyFootnotesReplacer import MDContentStrategyFootnotesReplacer
+from .MDContentStrategyPageBreakReplacer import MDContentStrategyPageBreakReplacer
 from .MDContentStrategyStyleNotesRestorer import MDContentStrategyStyleNotesRestorer
-
-from .MDContentStrategyEmptyAnchorsRemover import MDContentStrategyEmptyAnchorsRemover
 from .MDContentStrategyTableLinksFixer import MDContentStrategyTableLinksFixer
 from .MDContentStrategyTableSeparatorsFixer import MDContentStrategyTableSeparatorsFixer
-from .MDContentStrategyFootnotesReplacer import MDContentStrategyFootnotesReplacer
 
 __all__ = [
     "MDContentStrategyAnchorLinksRemover",

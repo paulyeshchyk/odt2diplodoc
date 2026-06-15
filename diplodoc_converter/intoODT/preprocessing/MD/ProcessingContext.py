@@ -1,9 +1,8 @@
-from diplodoc_converter.intoODT.models import DocNode
-
-
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Set
+
+from diplodoc_converter.intoODT.models import DocNode
 
 
 @dataclass

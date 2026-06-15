@@ -6,6 +6,8 @@
             "type": "shell",
             "dependsOrder": "sequence",
             "dependsOn": [
+                "Run Ruff Isort",
+                "Run Ruff Formatter",
                 "Run Ruff Linter",
                 "Run Mypy Typechecker"
             ],
@@ -16,29 +18,54 @@
             "problemMatcher": []
         },
         {
+            "label": "Run Ruff Isort",
+            "type": "shell",
+            "command": "${command:python.interpreterPath} -m ruff check . --select I --fix",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Ruff Formatter",
+            "type": "shell",
+            "command": "${command:python.interpreterPath} -m ruff format .",
+            "problemMatcher": [] // Для форматирования обычно не нужен problemMatcher
+        },
+        {
             "label": "Run Ruff Linter",
             "type": "shell",
             // Использование npx/pipx или прямой вызов, если они установлены глобально
-            "command": "ruff check .", 
+            "command": "${command:python.interpreterPath} -m ruff check .",
             "problemMatcher": {
                 "owner": "ruff",
-                "fileLocation": ["relative", "${workspaceFolder}"],
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
                 "pattern": {
                     "regexp": "^([^:]+):(\\d+):(\\d+):\\s+([^\\s]+)\\s+(.*)$",
-                    "file": 1, "line": 2, "column": 3, "code": 4, "message": 5
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "code": 4,
+                    "message": 5
                 }
             }
         },
         {
             "label": "Run Mypy Typechecker",
             "type": "shell",
-            "command": "python -m mypy .",
+            "command": "${command:python.interpreterPath} -m mypy .",
             "problemMatcher": {
                 "owner": "mypy",
-                "fileLocation": ["relative", "${workspaceFolder}"],
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
                 "pattern": {
                     "regexp": "^([^:]+):(\\d+):\\s+(error|warning|note):\\s+(.*)$",
-                    "file": 1, "line": 2, "severity": 3, "message": 4
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
                 }
             }
         },

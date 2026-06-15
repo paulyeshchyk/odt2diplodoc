@@ -125,9 +125,10 @@ To add a new transformation (e.g. convert three-column tables into lists), you j
 
 1. Install Python 3.11+, Pandoc, PyYAML.
 2. Clone the repository, create a virtual environment.
-3. Put your `manual.odt` in the root folder.
-4. Run `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.
-5. The result is ready to build with `diplodoc build`.
+3. Run `pip install -r requirements.txt`
+4. Put your `manual.odt` in the root folder.
+5. Run `python cli.py manual.odt ./docs/ru --pandoc-format "markdown-raw_html"`.
+6. The result is ready to build with `diplodoc build`.
 
 For more settings, see comments in `cli.py` and `config.py`.
 

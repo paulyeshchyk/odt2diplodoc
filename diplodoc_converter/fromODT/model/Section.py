@@ -1,10 +1,9 @@
 # diplodoc_converter/section_parser.py
 
-from typing import List
 from dataclasses import dataclass
-from pathlib import Path
-
 from enum import Enum
+from pathlib import Path
+from typing import List
 
 
 class SectionType(Enum):

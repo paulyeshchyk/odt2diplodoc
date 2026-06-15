@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import no_type_check
+
 from lxml import etree
 
+from diplodoc_converter.fromODT.odt.preprocessors.OdtPreprocessor import OdtPreprocessor
 from diplodoc_converter.fromODT.odt.process_odt_delegate import (
     process_odt_with_delegate,
 )
-from diplodoc_converter.fromODT.odt.preprocessors.OdtPreprocessor import OdtPreprocessor
 
 
 class OdtPreprocessor_StyleNote(OdtPreprocessor):

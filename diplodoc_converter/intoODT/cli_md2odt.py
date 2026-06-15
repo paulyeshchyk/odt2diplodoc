@@ -1,11 +1,10 @@
 # cli_export.py
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 from diplodoc_converter.intoODT.postProcessing.odt_builder import OdtBuilderPipeline
-
 from diplodoc_converter.intoODT.stages import (
     AnchorMappingStep,
     ImageCopyingStep,

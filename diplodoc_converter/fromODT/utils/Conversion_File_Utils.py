@@ -1,9 +1,8 @@
-from diplodoc_converter.fromODT.model.ConversionConfig import ConversionConfig
-from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
-
-
 import os
 from pathlib import Path
+
+from diplodoc_converter.fromODT.model.ConversionConfig import ConversionConfig
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 
 
 class Conversion_File_Utils:

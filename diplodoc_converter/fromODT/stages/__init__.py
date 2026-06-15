@@ -7,15 +7,14 @@ from .JsonUtils import JsonUtils
 from .MDFigureMapReplaceStage import MDFigureMapReplaceStage
 from .MDParserStage import MDParserStage
 from .MDSectionCopyImagesStage import MDSectionCopyImagesStage
-from .MDSectionStrategiesStage import MDSectionStrategiesStage
 from .MDSectionsLinkProcessingStage import MDSectionsLinkProcessingStage
 from .MDSectionsStage import MDSectionsStage
+from .MDSectionStrategiesStage import MDSectionStrategiesStage
 from .ODTCloneStage import ODTCloneStage
 from .ODTFigureMapBuildStage import ODTFigureMapBuildStage
 from .ODTPagebrakeReplaceStage import ODTPagebrakeReplaceStage
 from .ODTStyleNoteReplaceStage import ODTStyleNoteReplaceStage
-from .YamlStage import SectionHeaderShifter
-from .YamlStage import YamlStage
+from .YamlStage import SectionHeaderShifter, YamlStage
 
 __all__ = [
     "DirCacheWipeStage",

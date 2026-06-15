@@ -1,11 +1,10 @@
-from diplodoc_converter.intoODT.config import MdToOdtConfig
-from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
-from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
-
-
 import os
 import subprocess
 from pathlib import Path
+
+from diplodoc_converter.intoODT.config import MdToOdtConfig
+from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
+from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
 
 
 class PandocConversionStep(OdtPipelineStep):

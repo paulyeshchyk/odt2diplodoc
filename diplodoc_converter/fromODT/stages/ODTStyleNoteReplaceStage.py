@@ -1,9 +1,10 @@
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.utils import Conversion_File_Utils
-from .base import Stage
 from diplodoc_converter.fromODT.odt.preprocessors.OdtPreprocessor_StyleNote import (
     OdtPreprocessor_StyleNote,
 )
+from diplodoc_converter.fromODT.utils import Conversion_File_Utils
+
+from .base import Stage
 
 
 class ODTStyleNoteReplaceStage(Stage):

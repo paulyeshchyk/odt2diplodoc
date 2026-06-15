@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import no_type_check
+
 from lxml import etree
 
 from diplodoc_converter.fromODT.odt.process_odt_delegate import (
     process_odt_with_delegate,
 )
 
-from ...model.figure_constants import FIGURE_PREFIX, FIGURE_MARKER
+from ...model.figure_constants import FIGURE_MARKER, FIGURE_PREFIX
 
 NAMESPACES = {
     "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",

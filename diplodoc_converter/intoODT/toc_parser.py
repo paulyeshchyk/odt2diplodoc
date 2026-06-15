@@ -1,27 +1,25 @@
 # ------------------------------------------------------------
 # Парсер оглавлений
 # ------------------------------------------------------------
-from diplodoc_converter.intoODT.utils import extract_title_from_md
-from diplodoc_converter.intoODT.models import DocNode
-
+from pathlib import Path
+from typing import Any, Dict, List
 
 import yaml
 
-
-from pathlib import Path
-from typing import Any, Dict, List
+from diplodoc_converter.intoODT.models import DocNode
+from diplodoc_converter.intoODT.utils import extract_title_from_md
 
 
 class TocParser:
     """Загружает и обходит структуру toc.yaml, возвращает список FileInfo."""
 
     def __init__(self, root_dir: Path):
-        self.root_dir = root_dir.resolve()   # абсолютный путь к корню документации
+        self.root_dir = root_dir.resolve()  # абсолютный путь к корню документации
 
     def load_toc(self, toc_path: Path) -> List[Dict[str, Any]]:
         """Безопасно загружает toc.yaml, возвращает список элементов или [] при ошибке."""
         try:
-            with open(toc_path, 'r', encoding='utf-8') as f:
+            with open(toc_path, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except Exception as e:
             print(f"Не удалось прочитать {toc_path}: {e}")
@@ -30,7 +28,7 @@ class TocParser:
         # print(f"load toc: {toc_path}")
 
         if isinstance(data, dict):
-            items = data.get('items') or data.get('content')
+            items = data.get("items") or data.get("content")
             if items is None:
                 # print(f"В {toc_path} нет ключа 'items' или 'content', пропускаем")
                 return []
@@ -44,12 +42,14 @@ class TocParser:
             print(f"Файл {toc_path} имеет неожиданный формат: {type(data)}, пропускаем")
             return []
 
-    def collect_md_files(self, toc_dir: Path, toc_items: List[Dict[str, Any]], level: int = 1) -> List[DocNode]:
+    def collect_md_files(
+        self, toc_dir: Path, toc_items: List[Dict[str, Any]], level: int = 1
+    ) -> List[DocNode]:
         nodes = []
         for item in toc_items:
-            heading = item.get('name')
-            href = item.get('href') or item.get('path')
-            include = item.get('include')
+            heading = item.get("name")
+            href = item.get("href") or item.get("path")
+            include = item.get("include")
 
             md_path = None
             rel_path = None
@@ -58,7 +58,7 @@ class TocParser:
 
             # 1. Include – вложенное оглавление (переходим в другую папку)
             if include and isinstance(include, dict):
-                sub_toc_rel = include.get('path')
+                sub_toc_rel = include.get("path")
                 if sub_toc_rel:
                     sub_toc_abs = (toc_dir / sub_toc_rel).resolve()
                     if sub_toc_abs.is_file():
@@ -72,14 +72,14 @@ class TocParser:
                             md_path = candidate_md
 
             # 2. Прямая ссылка на md-файл (например: "href: introduction.md")
-            elif href and href.endswith('.md'):
+            elif href and href.endswith(".md"):
                 md_path = (toc_dir / href).resolve()
 
             # 3. Ссылка на YAML-файл конфигурации страницы
-            elif href and href.endswith('.yaml'):
+            elif href and href.endswith(".yaml"):
                 yaml_path = (toc_dir / href).resolve()
                 if yaml_path.is_file():
-                    md_path = yaml_path.with_suffix('.md')
+                    md_path = yaml_path.with_suffix(".md")
 
             # 4. Ссылка на папку (например: "href: getting-started")
             elif href:
@@ -110,10 +110,7 @@ class TocParser:
 
             # Создаем узел структуры
             node = DocNode(
-                heading=heading,
-                level=level,
-                path=md_path,
-                rel_path=rel_path
+                heading=heading, level=level, path=md_path, rel_path=rel_path
             )
 
             # Рекурсивно уходим вглубь, если нашли дочерние элементы

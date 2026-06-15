@@ -1,8 +1,8 @@
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
-    ProcessingContext,
-)
-from diplodoc_converter.intoODT.postProcessing.MD.MDNotesProcessor import (
+from diplodoc_converter.intoODT.preprocessing.MD.MDNotesProcessor import (
     MDNotesProcessor,
+)
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
+    ProcessingContext,
 )
 
 

@@ -1,11 +1,9 @@
 import re
+from pathlib import Path
 
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
     ProcessingContext,
 )
-
-
-from pathlib import Path
 
 
 class EmptyHeadingRemover:

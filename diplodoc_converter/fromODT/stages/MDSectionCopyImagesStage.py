@@ -1,8 +1,10 @@
 from pathlib import Path
-from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
+
 from diplodoc_converter.fromODT.image_processor import extract_and_replace_images
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 from diplodoc_converter.fromODT.model.Section import Section
+
 from .base import Stage
 
 

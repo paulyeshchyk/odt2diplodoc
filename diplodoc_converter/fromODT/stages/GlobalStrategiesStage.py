@@ -1,6 +1,7 @@
-from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from .base import Stage
 from diplodoc_converter.fromODT.md.strategies import global_strategies
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+
+from .base import Stage
 
 
 class GlobalStrategiesStage(Stage):

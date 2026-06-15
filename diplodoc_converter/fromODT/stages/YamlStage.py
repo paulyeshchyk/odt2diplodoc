@@ -1,13 +1,15 @@
 import re
+from pathlib import Path
+
+import yaml
 
 from diplodoc_converter.fromODT.model import ParserSettings
-from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
-from .base import Stage
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 from diplodoc_converter.fromODT.model.Section import Section, SectionType
-import yaml
-from pathlib import Path
+from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
+
+from .base import Stage
 
 
 class YamlStage(Stage):

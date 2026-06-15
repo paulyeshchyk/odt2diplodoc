@@ -5,7 +5,14 @@ exclude = [
 disallow_untyped_defs = false       # Разрешить функции без аннотаций
 check_untyped_defs = false          # НЕ заглядывать внутрь функций без аннотаций
 disallow_incomplete_defs = false    # Разрешить частичные аннотации
+install_types = true
+non_interactive = true
+
+# ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = "PIL.*"
 ignore_missing_imports = true
+
+# [tool.ruff.lint.isort]
+# no-sections = true

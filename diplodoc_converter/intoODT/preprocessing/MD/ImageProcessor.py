@@ -1,10 +1,12 @@
 import re
+
 from PIL import Image
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
+
+from diplodoc_converter.intoODT.config import MdToOdtConfig
+from diplodoc_converter.intoODT.preprocessing.MD.DocNodeUtils import DocNodeUtils
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
     ProcessingContext,
 )
-from diplodoc_converter.intoODT.config import MdToOdtConfig
-from diplodoc_converter.intoODT.postProcessing.MD.DocNodeUtils import DocNodeUtils
 
 
 class ImageProcessor:

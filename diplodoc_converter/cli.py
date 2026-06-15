@@ -1,7 +1,8 @@
 import argparse
+
 from diplodoc_converter.cli_args_builder import cli_args_builder
+from diplodoc_converter.fromODT.cli_odt2md import cli_odt2md
 from diplodoc_converter.intoODT.cli_md2odt import cli_md2odt
-from diplodoc_converter.fromODT.cli_import import cli_odt2md
 
 
 def main():

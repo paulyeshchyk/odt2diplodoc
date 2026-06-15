@@ -1,13 +1,11 @@
-from diplodoc_converter.intoODT.postProcessing.ODT.PandocInjector import PandocInjector
-from diplodoc_converter.intoODT.Transliterator import Transliterator
+import re
+
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 from diplodoc_converter.intoODT.postProcessing.ODT.CrossReferenceManager import (
     CrossReferenceManager,
 )
-
-
-import re
-
+from diplodoc_converter.intoODT.postProcessing.ODT.PandocInjector import PandocInjector
+from diplodoc_converter.intoODT.Transliterator import Transliterator
 
 # ------------------------------------------------------------
 # Стратегия 1: Поиск маркеров картинок и врезка TextBox

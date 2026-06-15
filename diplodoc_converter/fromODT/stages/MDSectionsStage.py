@@ -1,11 +1,11 @@
-from diplodoc_converter.fromODT.model.ParserSettings import ParserSettings
-from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
-from .base import Stage
-from diplodoc_converter.fromODT.model.Section import Section, SectionType
-
-
 import re
 from typing import Callable, List, Optional
+
+from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.ParserSettings import ParserSettings
+from diplodoc_converter.fromODT.model.Section import Section, SectionType
+
+from .base import Stage
 
 
 class MDSectionsStage(Stage):

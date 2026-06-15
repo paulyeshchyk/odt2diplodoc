@@ -1,12 +1,11 @@
-from diplodoc_converter.intoODT.Transliterator import Transliterator
-from diplodoc_converter.intoODT.config import MdToOdtConfig
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
-    ProcessingContext,
-)
-
-
 import re
 from typing import Set
+
+from diplodoc_converter.intoODT.config import MdToOdtConfig
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
+    ProcessingContext,
+)
+from diplodoc_converter.intoODT.Transliterator import Transliterator
 
 
 class HeadingShifter:

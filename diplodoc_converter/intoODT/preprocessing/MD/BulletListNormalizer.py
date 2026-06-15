@@ -1,6 +1,6 @@
 import re
 
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
     ProcessingContext,
 )
 

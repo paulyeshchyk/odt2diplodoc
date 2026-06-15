@@ -1,7 +1,8 @@
+from diplodoc_converter.fromODT.md.strategies import section_strategies
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 from diplodoc_converter.fromODT.stages.MDSectionsStage import SectionFlatten
+
 from .base import Stage
-from diplodoc_converter.fromODT.md.strategies import section_strategies
 
 
 class MDSectionStrategiesStage(Stage):

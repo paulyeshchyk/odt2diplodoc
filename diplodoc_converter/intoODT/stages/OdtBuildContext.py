@@ -1,11 +1,10 @@
 # ============================================================
 # 1. КОНТЕКСТ ПАЙПЛАЙНА
 # ============================================================
-from diplodoc_converter.intoODT.models import DocNode
-
-
 from pathlib import Path
 from typing import Dict, List
+
+from diplodoc_converter.intoODT.models import DocNode
 
 
 class OdtBuildContext:

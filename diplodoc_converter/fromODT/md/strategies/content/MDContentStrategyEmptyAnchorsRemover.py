@@ -1,5 +1,6 @@
 # diplodoc_converter/md_strategy/remove_empty_anchors.py
 import re
+
 from .MDContentStrategy import MDContentStrategy
 
 

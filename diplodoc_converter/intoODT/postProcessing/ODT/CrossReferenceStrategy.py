@@ -1,11 +1,10 @@
-from diplodoc_converter.intoODT.postProcessing.ODT.PandocInjector import PandocInjector
+import re
+
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 from diplodoc_converter.intoODT.postProcessing.ODT.CrossReferenceManager import (
     CrossReferenceManager,
 )
-
-
-import re
+from diplodoc_converter.intoODT.postProcessing.ODT.PandocInjector import PandocInjector
 
 
 class CrossReferenceStrategy:

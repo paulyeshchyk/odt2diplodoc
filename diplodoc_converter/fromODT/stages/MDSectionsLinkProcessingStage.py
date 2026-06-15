@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from diplodoc_converter.fromODT.link_processor import (
     build_slug_and_anchor_maps,
     replace_internal_links,

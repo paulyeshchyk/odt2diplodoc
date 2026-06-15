@@ -4,10 +4,11 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
 from diplodoc_converter.fromODT.stages.MDSectionsStage import (
     SectionFlatten,
 )
+from diplodoc_converter.fromODT.utils.os_file_utils import Os_File_Utils
+
 from .model.Section import Section
 
 

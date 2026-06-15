@@ -1,7 +1,9 @@
 import re
+
 from diplodoc_converter.fromODT.md.strategies.content.MDContentStrategy import (
     MDContentStrategy,
 )
+
 from ....model.figure_constants import REFERENCE_PATTERN
 
 

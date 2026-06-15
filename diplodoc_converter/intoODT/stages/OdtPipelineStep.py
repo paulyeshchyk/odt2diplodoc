@@ -1,7 +1,6 @@
-from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
-
-
 from abc import ABC, abstractmethod
+
+from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
 
 
 class OdtPipelineStep(ABC):

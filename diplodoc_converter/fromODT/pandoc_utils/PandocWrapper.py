@@ -1,11 +1,14 @@
 import os
 from pathlib import Path
+
 import pypandoc  # type: ignore
-from .PandocContext import PandocContext
-from .PandocOptions import PandocOptions
+
 from diplodoc_converter.fromODT.model_builder.PyPandocContextBuilder import (
     PyPandocContextBuilder,
 )
+
+from .PandocContext import PandocContext
+from .PandocOptions import PandocOptions
 
 
 class PandocWrapper:

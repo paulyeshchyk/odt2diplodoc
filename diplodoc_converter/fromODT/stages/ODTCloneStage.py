@@ -1,9 +1,9 @@
+import shutil
+
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
 from diplodoc_converter.fromODT.utils import Conversion_File_Utils
+
 from .base import Stage
-
-
-import shutil
 
 
 class ODTCloneStage(Stage):

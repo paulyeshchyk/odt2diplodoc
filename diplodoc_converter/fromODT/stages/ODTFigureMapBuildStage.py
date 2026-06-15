@@ -3,6 +3,7 @@ from diplodoc_converter.fromODT.odt.preprocessors.OdtProcessor_CrossRef import (
     OdtProcessor_CrossRef,
 )
 from diplodoc_converter.fromODT.utils import Conversion_File_Utils
+
 from .base import Stage
 
 

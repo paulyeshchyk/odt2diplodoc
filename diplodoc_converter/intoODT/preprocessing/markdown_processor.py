@@ -4,29 +4,28 @@
 # Обработчик содержимого Markdown
 # ------------------------------------------------------------
 
-from diplodoc_converter.intoODT.postProcessing.MD.BulletListNormalizer import (
-    BulletListNormalizer,
-)
-from diplodoc_converter.intoODT.postProcessing.MD.EmptyHeadingRemover import (
-    EmptyHeadingRemover,
-)
-from diplodoc_converter.intoODT.postProcessing.MD.FrontmatterRemover import (
-    FrontmatterRemover,
-)
-from diplodoc_converter.intoODT.postProcessing.MD.HeadingShifter import HeadingShifter
-from diplodoc_converter.intoODT.postProcessing.MD.ImageProcessor import ImageProcessor
-from diplodoc_converter.intoODT.postProcessing.MD.InternalLinkConverter import (
-    InternalLinkConverter,
-)
-from diplodoc_converter.intoODT.models import DocNode
-
 from pathlib import Path
 from typing import Callable, Dict, List
 
-from diplodoc_converter.intoODT.postProcessing.MD.NoteBlockReplacer import (
+from diplodoc_converter.intoODT.models import DocNode
+from diplodoc_converter.intoODT.preprocessing.MD.BulletListNormalizer import (
+    BulletListNormalizer,
+)
+from diplodoc_converter.intoODT.preprocessing.MD.EmptyHeadingRemover import (
+    EmptyHeadingRemover,
+)
+from diplodoc_converter.intoODT.preprocessing.MD.FrontmatterRemover import (
+    FrontmatterRemover,
+)
+from diplodoc_converter.intoODT.preprocessing.MD.HeadingShifter import HeadingShifter
+from diplodoc_converter.intoODT.preprocessing.MD.ImageProcessor import ImageProcessor
+from diplodoc_converter.intoODT.preprocessing.MD.InternalLinkConverter import (
+    InternalLinkConverter,
+)
+from diplodoc_converter.intoODT.preprocessing.MD.NoteBlockReplacer import (
     NoteBlockReplacer,
 )
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
     ProcessingContext,
 )
 

@@ -1,12 +1,11 @@
+import shutil
+from pathlib import Path
+from typing import List
+
 from diplodoc_converter.intoODT.config import MdToOdtConfig
 from diplodoc_converter.intoODT.models import DocNode
 from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
 from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
-
-
-import shutil
-from pathlib import Path
-from typing import List
 
 
 class ImageCopyingStep(OdtPipelineStep):

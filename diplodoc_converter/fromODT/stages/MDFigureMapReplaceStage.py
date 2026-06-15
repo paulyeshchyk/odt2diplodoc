@@ -1,7 +1,9 @@
 from pathlib import Path
-from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
+
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.model.ConverterSettings import ConverterSettings
 from diplodoc_converter.fromODT.stages.MDSectionsStage import SectionFlatten
+
 from .base import Stage
 
 

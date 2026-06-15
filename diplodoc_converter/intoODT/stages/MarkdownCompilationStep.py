@@ -1,12 +1,13 @@
-from diplodoc_converter.intoODT.config import MdToOdtConfig
-from diplodoc_converter.intoODT.markdown_processor import MarkdownProcessor
-from diplodoc_converter.intoODT.models import DocNode
-from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
-from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
-
-
 from pathlib import Path
 from typing import Dict
+
+from diplodoc_converter.intoODT.config import MdToOdtConfig
+from diplodoc_converter.intoODT.models import DocNode
+from diplodoc_converter.intoODT.preprocessing.markdown_processor import (
+    MarkdownProcessor,
+)
+from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
+from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
 
 
 class MarkdownCompilationStep(OdtPipelineStep):

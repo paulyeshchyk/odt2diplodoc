@@ -1,5 +1,6 @@
 # diplodoc_converter/md_strategy/table_links.py
 import re
+
 from .MDContentStrategy import MDContentStrategy
 
 

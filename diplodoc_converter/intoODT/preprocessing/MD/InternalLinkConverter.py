@@ -1,16 +1,14 @@
-from diplodoc_converter.intoODT.Transliterator import Transliterator
-from diplodoc_converter.intoODT.postProcessing.MD.ProcessingContext import (
-    ProcessingContext,
-)
-from diplodoc_converter.intoODT.models import DocNode
-
-
 import re
+import urllib.parse
 from pathlib import Path
 from typing import Dict
-import urllib.parse
 
-from diplodoc_converter.intoODT.postProcessing.MD.DocNodeUtils import DocNodeUtils
+from diplodoc_converter.intoODT.models import DocNode
+from diplodoc_converter.intoODT.preprocessing.MD.DocNodeUtils import DocNodeUtils
+from diplodoc_converter.intoODT.preprocessing.MD.ProcessingContext import (
+    ProcessingContext,
+)
+from diplodoc_converter.intoODT.Transliterator import Transliterator
 
 
 class InternalLinkConverter:

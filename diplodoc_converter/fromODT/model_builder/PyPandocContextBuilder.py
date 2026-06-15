@@ -1,8 +1,9 @@
 # diplodoc_converter/pandoc_wrapper.py
 from pathlib import Path
 
-from diplodoc_converter.fromODT.pandoc_utils.PandocContext import PandocContext
 from diplodoc_converter.fromODT.model.PyPandocContext import PyPandocContext
+from diplodoc_converter.fromODT.pandoc_utils.PandocContext import PandocContext
+
 from ..pandoc_utils.PandocOptions import PandocOptions
 
 

@@ -1,0 +1,12 @@
+{
+    "editor.fontLigatures": false,
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit"
+        },
+    },
+    "ruff.configuration": "",
+    "editor.defaultFormatter": "charliermarsh.ruff"
+}

@@ -1,3 +1,6 @@
+# Transliterator.py
+
+
 class Transliterator:
     @staticmethod
     def rough_translit(text: str) -> str:

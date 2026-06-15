@@ -1,12 +1,13 @@
 # strategies/md_strategy/fix_figure_references.py
 import re
-from .MDContentStrategy import MDContentStrategy
+
 from ....model.figure_constants import (
-    PLACEHOLDER_PATTERN,
     FIGURE_MARKER,
+    PLACEHOLDER_PATTERN,
     SOURCE_IMAGE_FOLDER,
     TARGET_IMAGE_FOLDER,
 )
+from .MDContentStrategy import MDContentStrategy
 
 
 class MDContentStrategyFigureReferencesReplacer(MDContentStrategy):

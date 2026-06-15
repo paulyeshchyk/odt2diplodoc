@@ -1,7 +1,8 @@
 from pathlib import Path
-from diplodoc_converter.fromODT.utils import Conversion_File_Utils
-from diplodoc_converter.fromODT.pandoc_utils.PandocContext import PandocContext
+
 from diplodoc_converter.fromODT.model.ConversionContext import ConversionContext
+from diplodoc_converter.fromODT.pandoc_utils.PandocContext import PandocContext
+from diplodoc_converter.fromODT.utils import Conversion_File_Utils
 
 
 class PandocContextBuilder:

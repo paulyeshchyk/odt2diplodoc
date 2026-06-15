@@ -1,12 +1,10 @@
-from diplodoc_converter.intoODT.models import DocNode
-from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
-from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
-
-
 import re
 from pathlib import Path
 from typing import Dict, List
 
+from diplodoc_converter.intoODT.models import DocNode
+from diplodoc_converter.intoODT.stages.OdtBuildContext import OdtBuildContext
+from diplodoc_converter.intoODT.stages.OdtPipelineStep import OdtPipelineStep
 from diplodoc_converter.intoODT.Transliterator import Transliterator
 
 
