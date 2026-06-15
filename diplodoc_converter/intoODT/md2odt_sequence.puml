@@ -9,6 +9,16 @@ participant "AnchorMappingStep" as Step2
 participant "ImageCopyingStep" as Step3
 participant "MarkdownCompilationStep" as Step4
 participant "MarkdownProcessor" as MDProc
+
+' Участники - Markdown-процессоры
+participant "FrontmatterRemover" as FMRM
+participant "HeadingShifter" as HShift
+participant "BulletListNormalizer" as BLNorm
+participant "EmptyHeadingRemover" as EHRem
+participant "NoteBlockReplacer" as NRepl
+participant "ImageProcessor" as ImgProc
+participant "InternalLinkConverter" as LinkConv
+
 participant "PandocConversionStep" as Step5
 participant "OdtPostProcessingStep" as Step6
 participant "OdtPostProcessor" as PostProc
@@ -24,6 +34,9 @@ activate Pipeline
 
 Pipeline -> Pipeline: OdtBuildContext(...)
 Pipeline -> Pipeline: tempfile.TemporaryDirectory()
+
+== Шаг 1: Парсинг структуры (TOC) ==
+
 Pipeline -> Step1: execute(context)
 activate Step1
 Step1 -> FS: root_dir/toc.yaml
@@ -33,47 +46,88 @@ Step1 -> Step1: TocParser.collect_md_files()
 Step1 --> Pipeline: context.nodes заполнен
 deactivate Step1
 
+== Шаг 2: Маппинг якорей ==
+
 Pipeline -> Step2: execute(context)
 activate Step2
 Step2 -> Step2: AnchorMappingStep._build_anchor_map(context.nodes)
 Step2 --> Pipeline: context.anchor_map
 deactivate Step2
 
+== Шаг 3: Копирование ресурсов ==
+
 Pipeline -> Step3: execute(context)
 activate Step3
-Step3 -> Step3: ImageCopyingStep._copy_images_for_nodes()
 loop по всем узлам
     Step3 -> FS: копирование изображений в context.temp_dir
 end
+Step3 --> Pipeline: готово
 deactivate Step3
+
+== Шаг 4: Компиляция и процессинг Markdown ==
 
 Pipeline -> Step4: execute(context)
 activate Step4
-Step4 -> Step4: MarkdownCompilationStep._write_node()
 loop по всем узлам
+    Step4 -> Step4: MarkdownCompilationStep._write_node()
     Step4 -> MDProc: new MarkdownProcessor(...)
     activate MDProc
     MDProc -> MDProc: process(content, node)
+    
     loop по всем процессорам
-        MDProc -> MDProc: FrontmatterRemover.process
-        MDProc -> MDProc: HeadingShifter.process
-        MDProc -> MDProc: BulletListNormalizer.process
-        MDProc -> MDProc: EmptyHeadingRemover.process
-        MDProc -> MDProc: NoteBlockReplacer.process
-        MDProc -> MDProc: ImageProcessor.process
-        MDProc -> MDProc: InternalLinkConverter.process
+        MDProc -> FMRM: process(content)
+        activate FMRM
+        FMRM --> MDProc: content
+        deactivate FMRM
+        
+        MDProc -> HShift: process(content)
+        activate HShift
+        HShift --> MDProc: content
+        deactivate HShift
+        
+        MDProc -> BLNorm: process(content)
+        activate BLNorm
+        BLNorm --> MDProc: content
+        deactivate BLNorm
+        
+        MDProc -> EHRem: process(content)
+        activate EHRem
+        EHRem --> MDProc: content
+        deactivate EHRem
+        
+        MDProc -> NRepl: process(content)
+        activate NRepl
+        NRepl --> MDProc: content
+        deactivate NRepl
+        
+        MDProc -> ImgProc: process(content)
+        activate ImgProc
+        ImgProc --> MDProc: content
+        deactivate ImgProc
+        
+        MDProc -> LinkConv: process(content)
+        activate LinkConv
+        LinkConv --> MDProc: content
+        deactivate LinkConv
     end
+    
     MDProc --> Step4: processed_content
     deactivate MDProc
     Step4 -> FS: запись в context.combined_md_path
 end
+Step4 --> Pipeline: готово
 deactivate Step4
+
+== Шаг 5: Конвертация через Pandoc ==
 
 Pipeline -> Step5: execute(context)
 activate Step5
 Step5 -> Step5: subprocess.run(pandoc ...)
 Step5 -> FS: конвертация в context.output_path
+Step5 --> Pipeline: готово
 deactivate Step5
+
+== Шаг 6: Постпроцессинг ODT ==
 
 Pipeline -> Step6: execute(context)
 activate Step6
@@ -100,8 +154,12 @@ CrossRef --> PostProc: изменённый content.xml
 deactivate CrossRef
 
 PostProc -> FS: запись обновлённого content.xml в ODT
+PostProc --> Step6: готово
 deactivate PostProc
+Step6 --> Pipeline: готово
 deactivate Step6
+
+== Финализация ==
 
 Pipeline -> Pipeline: clean temp_dir
 Pipeline --> CLI: результат

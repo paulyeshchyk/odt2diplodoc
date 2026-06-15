@@ -16,7 +16,14 @@ participant "MDParserStage" as MDParser
 participant "MarkdownFileReader" as MDFile
 participant "PandocWrapper" as Pandoc
 participant "PyPandocContextBuilder" as PyBuilder
-participant "GlobalStrategiesStage" as GlobalStrat
+
+participant "MDContentStrategyEmptyAnchorsRemover" as EmptyAnchors
+participant "MDContentStrategyFigureReferencesReplacer1" as FigRep1
+participant "MDContentStrategyFigureReferencesReplacer" as FigRep2
+participant "MDContentStrategyAnchorLinksRemover" as AnchorRem
+participant "MDContentStrategyStyleNotesRestorer" as NotesRestorer
+participant "MDContentStrategyPageBreakReplacer" as PageBreakRestorer
+
 participant "MDSectionsStage" as Sections
 participant "HeaderParser" as HeadParse
 participant "SectionIndexAssigner" as IndexAssign
@@ -27,6 +34,11 @@ participant "MDSectionCopyImagesStage" as CopyImages
 participant "extract_and_replace_images" as ImgProc
 participant "MDFigureMapReplaceStage" as FigMapReplace
 participant "MDSectionStrategiesStage" as SectStrat
+
+participant "MDSectionStrategyPandocAttributesRemove" as PandocAttrRem
+participant "HorizontalRuleNoteStrategy" as HRNoteStrat
+participant "MDSectionStrategyImagesInFiguresWrap" as ImgFigWrap
+
 participant "YamlStage" as YamlGen
 participant "DirCacheWipeStage" as WipeCache
 database "Файловая система" as FS
@@ -52,15 +64,20 @@ Conversion_File_Utils --> Clone: temp_odt_path
 Clone -> FS: копирование исходного ODT во временную папку
 deactivate Clone
 
+== препроцессинг odt ==
+
 Pipeline -> BuildFigMap: process(ctx)
 activate BuildFigMap
 BuildFigMap -> Conversion_File_Utils: odt_temp_path(ctx.config)
 BuildFigMap -> CrossRef: process_odt_crossrefs(temp_odt)
 activate CrossRef
 CrossRef -> process_odt_with_delegate: вызов делегата
+activate process_odt_with_delegate
 process_odt_with_delegate -> CrossRef: _process(tmp_path)
-CrossRef -> _process: парсинг content.xml
+CrossRef -> CrossRef: парсинг content.xml
 note right of CrossRef: Поиск <draw:frame>,\n<text:sequence>,\n<text:sequence-ref>\nДобавление маркеров {#fig:N}
+process_odt_with_delegate --> CrossRef: готово
+deactivate process_odt_with_delegate
 CrossRef --> BuildFigMap: fig_map
 deactivate CrossRef
 BuildFigMap -> ctx: сохраняет fig_map
@@ -73,6 +90,7 @@ NotePrep -> NoteProc: process(odt_temp_path)
 activate NoteProc
 NoteProc -> process_odt_with_delegate: _process_notes
 note right of NoteProc: Замена стилей NoteAlert,\nNoteInfo,NoteTip на\nмаркеры @@@NOTE_...@@@
+NoteProc --> NotePrep: готово
 deactivate NoteProc
 deactivate NotePrep
 
@@ -83,15 +101,18 @@ PageBreakPrep -> PageBreakProc: process(odt_temp_path)
 activate PageBreakProc
 PageBreakProc -> process_odt_with_delegate: _process_page_breaks
 note right of PageBreakProc: Замена пустых абзацев со стилем P*,\nатрибутов break-before="page"\nна маркеры @@@PAGE_BREAK@@@
+PageBreakProc --> PageBreakPrep: готово
 deactivate PageBreakProc
 deactivate PageBreakPrep
+
+== Парсинг и конвертация ==
 
 Pipeline -> MDParser: process(ctx)
 activate MDParser
 MDParser -> MDFile: read_from_cache(ctx)
 alt Кэш существует
     MDFile --> MDParser: markdown из кэша
-else
+else Кэш отсутствует
     MDParser -> Pandoc: convert_odt_to_markdown(pandoc_ctx, pandoc_options)
     activate Pandoc
     Pandoc -> PyBuilder: build(...)
@@ -104,37 +125,72 @@ end
 MDParser -> ctx: сохраняет markdown
 deactivate MDParser
 
-Pipeline -> GlobalStrat: process(ctx)
-activate GlobalStrat
-loop для каждой глобальной стратегии
-    GlobalStrat -> strategy: transform(ctx.markdown)
-end
-deactivate GlobalStrat
+== глобальная стратегия трансформации ==
+
+Pipeline -> EmptyAnchors: transform(ctx.markdown)
+activate EmptyAnchors
+EmptyAnchors --> Pipeline: изменённый markdown
+deactivate EmptyAnchors
+
+Pipeline -> FigRep1: transform(ctx.markdown)
+activate FigRep1
+FigRep1 --> Pipeline: изменённый markdown
+deactivate FigRep1
+
+Pipeline -> FigRep2: transform(ctx.markdown)
+activate FigRep2
+FigRep2 --> Pipeline: изменённый markdown
+deactivate FigRep2
+
+Pipeline -> AnchorRem: transform(ctx.markdown)
+activate AnchorRem
+AnchorRem --> Pipeline: изменённый markdown
+deactivate AnchorRem
+
+Pipeline -> NotesRestorer: transform(ctx.markdown)
+activate NotesRestorer
+NotesRestorer --> Pipeline: изменённый markdown
+deactivate NotesRestorer
+
+Pipeline -> PageBreakRestorer: transform(ctx.markdown)
+activate PageBreakRestorer
+PageBreakRestorer --> Pipeline: изменённый markdown
+deactivate PageBreakRestorer
+
+== Обработка структуры документа и ресурсов ==
 
 Pipeline -> Sections: process(ctx)
 activate Sections
 Sections -> Sections: parse_sections(ctx.markdown, parser_settings)
 note right of Sections: Разбиение Markdown на секции\nпо заголовкам
 Sections -> HeadParse: parse_heading(cleaned)
+activate HeadParse
 HeadParse --> Sections: (section_type, number, pureTitle)
+deactivate HeadParse
 Sections -> Sections: создание объектов Section
-Sections -> SectionIndexAssigner: assign_section_indices(sections, ...)
-SectionIndexAssigner --> Sections: присвоение sectionIndex
+Sections -> IndexAssign: assign_section_indices(sections, ...)
+activate IndexAssign
+IndexAssign --> Sections: присвоение sectionIndex
+deactivate IndexAssign
 Sections --> ctx: ctx.sections
 deactivate Sections
 
 Pipeline -> LinkProc: process(ctx)
 activate LinkProc
 LinkProc -> SlugMap: build_slug_and_anchor_maps(sections, output_dir)
+activate SlugMap
 SlugMap --> LinkProc: slug_map, anchor_map
+deactivate SlugMap
 LinkProc -> ReplaceLinks: replace_internal_links(sec.body, ...)
+activate ReplaceLinks
 ReplaceLinks --> LinkProc: изменённый body
+deactivate ReplaceLinks
 LinkProc -> SectionFlatten: flatten_sections(sections)
 deactivate LinkProc
 
 Pipeline -> CopyImages: process(ctx)
 activate CopyImages
-CopyImages -> extract_and_replace_images
+CopyImages -> ImgProc: extract_and_replace_images
 activate ImgProc
 ImgProc --> CopyImages: новый body, количество
 deactivate ImgProc
@@ -147,12 +203,31 @@ FigMapReplace -> ctx: замена [@fig:N] на [N](media/путь)
 FigMapReplace -> SectionFlatten: flatten_sections(sections)
 deactivate FigMapReplace
 
+== секционная стратегия трансформации ==
+
 Pipeline -> SectStrat: process(ctx)
 activate SectStrat
-loop для каждой секционной стратегии
-    SectStrat -> strategy: transform_section(sec)
+
+loop для каждой секции sec в ctx.sections
+    SectStrat -> PandocAttrRem: transform_section(sec)
+    activate PandocAttrRem
+    PandocAttrRem --> SectStrat: готово
+    deactivate PandocAttrRem
+    
+    SectStrat -> HRNoteStrat: transform_section(sec)
+    activate HRNoteStrat
+    HRNoteStrat --> SectStrat: готово
+    deactivate HRNoteStrat
+    
+    SectStrat -> ImgFigWrap: transform_section(sec)
+    activate ImgFigWrap
+    ImgFigWrap --> SectStrat: готово
+    deactivate ImgFigWrap
 end
+
 deactivate SectStrat
+
+== Финализация и экспорт ==
 
 Pipeline -> YamlGen: process(ctx)
 activate YamlGen

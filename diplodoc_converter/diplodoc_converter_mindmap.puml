@@ -1,0 +1,61 @@
+@startmindmap
+<style>
+mindmapDiagram {
+    .grey {
+        BackgroundColor #f0f0f0
+        LineColor #e0e0e0
+        HyperlinkColor #101010
+        HyperlinkUnderlineThickness 0
+    }
+    .green {
+        BackgroundColor #90de90
+        LineColor #60d060
+        HyperlinkColor #1d601d
+        HyperlinkUnderlineThickness 0
+    }
+    .selected {
+        BackgroundColor #ff9500
+        LineColor #d47c00
+        HyperlinkColor #1f1510
+        HyperlinkUnderlineThickness 0
+    }
+}
+</style>
+
+left to right direction
+
+*[#Orange] Единая база знаний\n(Синхронизация ODT <=> MD)
+
+**[#lightgreen] [Импорт] Из ODT в MD-документацию
+***[#lightblue] 1. Подготовка ODT (Препроцессинг) << grey >>
+**** Очистка output-директории и клонирование ODT во временную папку
+**** Сборка карты рисунков (OdtProcessor_CrossRef)
+**** Замена стилей заметок и разрывов на маркеры (Note & PageBreak Preprocessors)
+***[#lightblue] 2. Парсинг и Конвертация
+**** Вызов Pandoc для сборки сырого Markdown (или чтение из кэша)
+***[#lightblue] 3. Глобальные трансформации текста
+**** Очистка пустых якорей и ссылок на рисунки
+**** Восстановление нативных заметок и разрывов из маркеров
+***[#lightblue] 4. Нарезка структуры и ресурсов
+**** Разбиение монолита на секции (Section) по иерархии заголовков
+**** Сборка slug-карт и рефакторинг внутренних ссылок
+**** Извлечение картинок на диск и финальный маппинг [@fig:N]
+***[#lightblue] 5. Секционные стратегии и Финализация 
+**** Очистка Pandoc-аттрибутов и обертка картинок в фигуры индивидуально для каждой секции
+**** Генерация YAML-метаданных (index, toc) и очистка кэша
+
+**[#lightgreen] [Экспорт] Из MD в нативный ODT 
+***[#lightblue] 1. Анализ структуры и маппинг
+**** Чтение структуры из toc.yaml и сборка всех MD-файлов в граф узлов
+**** Индексация внутренних якорей и агрегация картинок в temp-папку
+***[#lightblue] 2. Процессинг и компиляция Markdown-монолита
+**** Цикл трансформаций над каждым файлом (Frontmatter, HeadingShifter, BulletNormalizer)
+**** Обработка блоков заметок, ссылок и генерация финального *.md для Pandoc
+***[#lightblue] 3. Конвертация через Pandoc
+**** Сборка бинарного ODT-файла из подготовленного Markdown-файла
+***[#lightblue] 4. Постпроцессинг ODT-архива
+**** Внедрение нативных рамок OpenDocument вместо текстовых маркеров подписей (FigureCaptionStrategy)
+**** Перевод HTML-ссылок <text:a> в динамические перекрестные ссылки ODT (CrossReferenceStrategy)
+**** Пересборка zip-пакета и очистка временного окружения
+
+@endmindmap

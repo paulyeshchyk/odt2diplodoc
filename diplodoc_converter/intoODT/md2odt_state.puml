@@ -1,0 +1,49 @@
+@startuml
+title Диаграмма состояний контекста при сборки ODT из MD
+
+[*] --> Initialized : Запуск CLI и инициализация контекста сборки
+
+state ContextSetup {
+    [*] --> TempDirCreated : Создание временной директории сборки
+    TempDirCreated --> TocLoaded : Загрузка файла структуры toc.yaml
+    TocLoaded --> NodesCollected : Сборка списка всех MD-файлов (Nodes)
+}
+
+state AnchorMapping {
+    NodesCollected --> AnchorMapBuilt : Индексация всех внутренних якорей
+}
+
+state ResourcePreparation {
+    AnchorMapBuilt --> ImagesAggregated : Копирование всех медиа-файлов во временную папку
+}
+
+state MarkdownCompilation {
+    ImagesAggregated --> CompilationStarted : Старт обхода узлов
+    
+    state CompilationStarted {
+        [*] --> FrontmatterCleaned : Удаление метаданных (Frontmatter)
+        FrontmatterCleaned --> HeadingsShifted : Сдвиг уровней заголовков
+        HeadingsShifted --> ListsNormalized : Нормализация списков
+        ListsNormalized --> EmptyHeadingsRemoved : Удаление пустых заголовков
+        EmptyHeadingsRemoved --> SpecialBlocksProcessed : Замена блоков заметок, ссылок и картинок
+    }
+    
+    SpecialBlocksProcessed --> MonolithMdWritten : Запись объединенного MD-файла на диск
+}
+
+state PandocConversion {
+    MonolithMdWritten --> OdtGenerated : Конвертация MD -> ODT через Pandoc (Subprocess)
+}
+
+state OdtPostProcessing {
+    OdtGenerated --> CaptionsInjected : Замена %%%CAPTION_START%%% на нативные рамки ODT
+    CaptionsInjected --> CrossReferencesFixed : Замена ссылок <text:a> на динамические <text:sequence-ref>
+    CrossReferencesFixed --> OdtXmlSaved : Упаковка обновленного content.xml обратно в ODT-архив
+}
+
+state Finalization {
+    OdtXmlSaved --> TempDirCleaned : Очистка временной директории
+}
+
+TempDirCleaned --> [*] : Сборка завершена (Файл готов)
+@enduml

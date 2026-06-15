@@ -1,0 +1,46 @@
+@startuml
+title Диаграмма состояний контекста при конвертации ODT в MD
+
+[*] --> Initialized : Запуск CLI и создание контекста (Ctx)
+
+state Initialized {
+    [*] --> TargetCleaned : Очистка выходной директории
+    TargetCleaned --> OdtCloned : Создание временной копии ODT
+}
+
+state OdtPreprocessing {
+    OdtCloned --> FigMapBuilt : Парсинг content.xml и сборка карты рисунков
+    FigMapBuilt --> NotesPreprocessed : Замена стилей заметок на маркеры @@@NOTE...
+    NotesPreprocessed --> PageBreaksPreprocessed : Замена разрывов страниц на маркеры @@@PAGE_BREAK...
+}
+
+state MarkdownParsing {
+    PageBreaksPreprocessed --> SourceMdExtracted : Конвертация ODT -> MD (Pandoc / Кэш)
+}
+
+state GlobalTransformation {
+    SourceMdExtracted --> AnchorsCleaned : Удаление пустых и лишних якорей
+    AnchorsCleaned --> FigRefsReplaced : Замена ссылок на рисунки
+    FigRefsReplaced --> MarkersRestored : Восстановление заметок и разрывов из маркеров
+}
+
+state StructureProcessing {
+    MarkersRestorer --> SectionsParsed : Нарезка единого MD на объекты Section по заголовкам
+    SectionsParsed --> LinksProcessed : Построение slug-карт и замена внутренних ссылок
+    LinksProcessed --> ImagesExtracted : Извлечение изображений в целевую папку
+    ImagesExtracted --> FigMapReplaced : Финальная замена [@fig:N] на пути к media
+}
+
+state SectionTransformation {
+    FigMapReplaced --> PandocAttrsRemoved : Очистка атрибутов Pandoc в секциях
+    PandocAttrsRemoved --> HRNotesProcessed : Обработка горизонтальных линий заметок
+    HRNotesProcessed --> ImagesWrapped : Обертывание картинок в фигуры (Figures Wrap)
+}
+
+state Finalization {
+    ImagesWrapped --> OutputGenerated : Запись index.md, index.yaml, toc.yaml на диск
+    OutputGenerated --> CacheWiped : Удаление временных файлов (если keep_cache=False)
+}
+
+CacheWiped --> [*] : Успешное завершение (Готово)
+@enduml
